@@ -1,28 +1,35 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Button } from "react-native";
+import React, { useState } from "react";
 
-export default function Input({ autoFocus }) {
+export default function Input({ textInputFocus, onConfirm }) {
   const [text, setText] = useState("");
-  const [isBlurred, setIsBlurred] = useState(false); 
+  const [blur, setBlur] = useState(false);
+
+  function updateText(changedText) {
+    setText(changedText);
+  }
 
   // Function to log the input value to the console
   const handleConfirm = () => {
     console.log("User input: ", text);
+    onConfirm(text);
   };
 
   return (
     <View>
-      <TextInput 
-        placeholder='Type sth' 
-        keyboardType='default' 
-        style={styles.input}
+      <TextInput
+        autoFocus={textInputFocus}
+        placeholder="Type something"
+        keyboardType="default"
+        style={{ borderBottomColor: "purple", borderBottomWidth: 2 }}
         value={text}
-        autoFocus={autoFocus} 
-        onChangeText={function (changedText) {
-          setText(changedText);
-          setIsBlurred(false);
+        onChangeText={updateText}
+        onBlur={() => {
+          setBlur(true);
         }}
-        onBlur={() => setIsBlurred(true)} 
+        onFocus={() => {
+          setBlur(false);
+        }}
       />
 
       <Button
@@ -31,24 +38,18 @@ export default function Input({ autoFocus }) {
        color="#841584"
       />
 
-      {text.length > 0 && !isBlurred && (
-        <Text>Character count: {text.length}</Text>
+      {blur ? (
+        text.length >= 3 ? (
+          <Text>Thank you</Text>
+        ) : (
+          <Text>Please type more than 3 characters</Text>
+        )
+      ) : (
+        text && <Text>{text.length}</Text>
       )}
-
-      {isBlurred && (
-        <Text>
-          {text.length >= 3 ? "Thank you" : "Please type more than 3 characters"}
-        </Text>
-      )}
-
+      
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  input: {
-    borderBottomColor: 'purple',
-    borderBottomWidth: 2,
-    marginBottom: 10
-  }
-});
+const styles = StyleSheet.create({});
