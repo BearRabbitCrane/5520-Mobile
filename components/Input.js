@@ -5,6 +5,11 @@ export default function Input({ autoFocus }) {
   const [text, setText] = useState("");
   const [isBlurred, setIsBlurred] = useState(false); 
 
+  // Function to log the input value to the console
+  const handleConfirm = () => {
+    console.log("User input: ", text);
+  };
+
   return (
     <View>
       <TextInput 
@@ -20,6 +25,12 @@ export default function Input({ autoFocus }) {
         onBlur={() => setIsBlurred(true)} 
       />
 
+      <Button
+       onPress={handleConfirm}
+       title="Confirm"
+       color="#841584"
+      />
+
       {text.length > 0 && !isBlurred && (
         <Text>Character count: {text.length}</Text>
       )}
@@ -29,6 +40,7 @@ export default function Input({ autoFocus }) {
           {text.length >= 3 ? "Thank you" : "Please type more than 3 characters"}
         </Text>
       )}
+
     </View>
   );
 }
