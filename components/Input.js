@@ -17,12 +17,12 @@ export default function Input({ textInputFocus, onConfirm, isModalVisible }) {
 
   return (
     <Modal animationType="slide" visible={isModalVisible} transparent={true}>
-      <View style={styles.container}>
+      <View style={styles.modalContainer}>
         <TextInput
           autoFocus={textInputFocus}
           placeholder="Type something"
           keyboardType="default"
-          style={{ borderBottomColor: "purple", borderBottomWidth: 2 }}
+          style={styles.input}
           value={text}
           onChangeText={updateText}
           onBlur={() => {
@@ -33,32 +33,51 @@ export default function Input({ textInputFocus, onConfirm, isModalVisible }) {
           }}
         />
 
-        <Button
-          onPress={handleConfirm}
-          title="Confirm"
-          color="#841584"
-        />
+        <View style={styles.buttonContainer}>
+          <Button
+            onPress={handleConfirm}
+            title="Confirm"
+            color="#841584"
+          />
+        </View>
 
         {blur ? (
           text.length >= 3 ? (
-            <Text>Thank you</Text>
+            <Text style={styles.text}>Thank you</Text>
           ) : (
-            <Text>Please type more than 3 characters</Text>
+            <Text style={styles.text}>Please type more than 3 characters</Text>
           )
         ) : (
-          text && <Text>{text.length}</Text>
+          text && <Text style={styles.text}>{text.length}</Text>
         )}
-
       </View>
     </Modal>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  modalContainer: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    backgroundColor: "powderblue",
   },
+  input: {
+    width: '80%',
+    borderBottomColor: 'purple',
+    borderBottomWidth: 2,
+    paddingVertical: 10,
+    marginBottom: 20,
+    fontSize: 16,
+    color: "#000",
+  },
+  text: {
+    fontSize: 20,
+    color: "steelblue",
+    marginVertical: 10,
+  },
+  buttonContainer: {
+    width: '30%',
+    marginVertical: 10
+  }
 });
