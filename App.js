@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -7,15 +7,13 @@ import Input from "./components/Input";
 export default function App() {
   const appName = "My app";
   const [inputData, setInputData] = useState("");
-  const [isModalVisible, setIsModalVisible] = useState("");
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Function to handle the data received from Input.js
   const handleInputData = (data) => {
     setInputData(data);
-    setIsModalVisible(false);  // Hide the modal after goal is added
+    setIsModalVisible(false);
   };
 
-  // Function to show the modal
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -23,19 +21,21 @@ export default function App() {
   return (
     <View style={styles.container}>
       <StatusBar style="auto" />
-      <Header name={appName} />
+      
+      <View style={styles.topSection}>
+        <Header name={appName} />
+        <Button title="Add a goal" onPress={showModal} />
+      </View>
 
-      {/* Button to trigger modal visibility */}
-      <Button title="Add a goal" onPress={showModal} />
+      <View style={styles.bottomSection}>
+        {inputData !== "" && <Text style={styles.inputText}>{inputData}</Text>}
+      </View>
 
-      {/* Passing modal visibility and callback function to Input component */}
       <Input
         textInputFocus={true}
         onConfirm={handleInputData}
         isModalVisible={isModalVisible}
       />
-
-      {inputData !== "" && <Text>{inputData}</Text>}
     </View>
   );
 }
@@ -43,8 +43,22 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
+    backgroundColor: "#fff", 
+  },
+  topSection: {
+    flex: 1, 
     justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  bottomSection: {
+    flex: 4,
+    backgroundColor: "pink",
+    alignContent: "center",
+    alignItems: "center",
+  },
+  inputText: {
+    fontSize: 18,
+    color: "steelblue",
   },
 });
