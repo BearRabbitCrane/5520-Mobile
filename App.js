@@ -32,7 +32,11 @@ export default function App() {
       </View>
 
       <View style={styles.bottomSection}>
-        {inputData !== "" && <Text style={styles.inputText}>{inputData}</Text>}
+        {inputData !== "" && (
+          <View style={styles.textContainer}>
+            <Text style={styles.inputText}>{inputData}</Text>
+          </View>
+        )}
       </View>
 
       <Input
@@ -61,9 +65,18 @@ const styles = StyleSheet.create({
     backgroundColor: "pink",
     alignContent: "center",
     alignItems: "center",
+    justifyContent: "center",
+  },
+  textContainer: {
+    backgroundColor: "#aaa",  // Apply background color to the View
+    borderRadius: 10,  // Apply rounded corners to the View
+    padding: 10,  // Add padding around the Text
+    marginVertical: 10,  // Add some vertical margin for spacing
+    alignItems: "center",  // Center the text horizontally inside the View
   },
   inputText: {
     fontSize: 18,
-    color: "steelblue",
+    color: "steelblue",  // Text color
+    textAlign: "center",  // Center the text within the container
   },
 });
