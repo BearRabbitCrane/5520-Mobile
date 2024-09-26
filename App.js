@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView, ScrollView } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -43,15 +43,18 @@ export default function App() {
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
-      {/* Display the list of goals using map() */}
-      <View style={styles.bottomSection}>
+     {/* Wrap the list of goals in ScrollView */}
+      <ScrollView 
+        style={styles.bottomSection} 
+        contentContainerStyle={styles.scrollContainer}  // Apply alignItems and justifyContent here
+        showsVerticalScrollIndicator={true}  // Shows the vertical scroll indicator
+      >
         {goals.map((item) => (
-          <View key={item.id} style={[styles.textContainer, { width: item.text.length * 10 + 50 }]}>
-            {/* Ensure all text is wrapped in <Text> */}
+          <View key={item.id} style={[styles.textContainer, { width: item.text.length * 10 + 40 }]}>
             <Text style={styles.inputText}>{item.text}</Text>
           </View>
         ))}
-      </View>
+      </ScrollView>
 
       <Input
         textInputFocus={true}
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   topSection: {
-    flex: 1, 
+    //flex: 1, 
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -77,10 +80,14 @@ const styles = StyleSheet.create({
   bottomSection: {
     flex: 4,
     backgroundColor: "pink",
-    alignContent: "center",
-    alignItems: "center",
     //justifyContent: "center",
     width: "100%",  // Make sure section takes full width
+  },
+  scrollContainer: {
+    alignItems: "flex-start",  // Align items to the top left
+    paddingTop: 10,  // Add some padding at the top to move the goals up
+    paddingHorizontal: 20,  // Padding on the sides to keep text away from edges
+    justifyContent: "center",
   },
   textContainer: {
     backgroundColor: "#aaa",  // Apply background color to the View
