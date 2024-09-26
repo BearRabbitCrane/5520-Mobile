@@ -27,6 +27,12 @@ export default function App() {
     setIsModalVisible(false);  // Close the modal after adding the goal
   };
 
+  // Function to delete a goal by id
+  const handleDeleteGoal = (id) => {
+    // Update goals array by filtering out the goal with the matching id
+    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);  // Close the modal without adding a goal
   };
@@ -48,7 +54,13 @@ export default function App() {
         {/* Use FlatList to render the goals */}
         <FlatList
           data={goals}  // Pass the goals array as data
-          renderItem={({ item }) => <GoalItem text={item.text} />}  // Render GoalItem component for each goal
+          renderItem={({ item }) => (
+            <GoalItem 
+              text={item.text} 
+              id={item.id} 
+              onDelete={handleDeleteGoal}  // Pass the delete handler to GoalItem
+            />
+          )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
         />
       </View>

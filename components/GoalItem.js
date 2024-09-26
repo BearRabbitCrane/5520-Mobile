@@ -1,10 +1,14 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, Button, StyleSheet } from 'react-native';
 
-const GoalItem = ({ text }) => {
+const GoalItem = ({ text, id, onDelete }) => {
+    console.log(text);
   return (
     <View style={[styles.textContainer, { width: text.length * 10 + 40 }]}>
       <Text style={styles.inputText}>{text}</Text>
+      {/* Delete button */}
+      <Button title="X" onPress={() => onDelete(id)} color="red" /> 
+         {/* Pass the goal id back to parent when pressed */}
     </View>
   );
 };
@@ -17,6 +21,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,  // Add some vertical margin for spacing
     alignItems: "center",  // Center the text horizontally inside the View
     alignSelf: "center",  // Center the goal containers
+    flexDirection: "row",  // Arrange the text and button horizontally
+    justifyContent: "space-between",  // Spread the text and button
   },
   inputText: {
     fontSize: 18,
