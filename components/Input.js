@@ -1,24 +1,60 @@
-import { StyleSheet, Text, TextInput, View, Button, Modal } from "react-native";
+import { StyleSheet, Text, TextInput, View, Button, Modal, Alert, Image } from "react-native";
 import React, { useState } from "react";
 
-export default function Input({ textInputFocus, onConfirm, isModalVisible }) {
+export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisible }) {
   const [text, setText] = useState("");
-  const [blur, setBlur] = useState(false);
+  const [isConfirmDisabled, setIsConfirmDisabled] = useState(true); // Confirm button disabled by default
 
   function updateText(changedText) {
     setText(changedText);
+    setIsConfirmDisabled(changedText.length < 3);  // Enable Confirm if input has at least 3 characters
   }
 
-  // Function to log the input value and call the parent callback
   const handleConfirm = () => {
-    console.log("User input: ", text);
-    onConfirm(text); 
+    onConfirm(text);
+    setText("");  // Clear TextInput after confirming
+  };
+
+  const handleCancel = () => {
+    Alert.alert(
+      "Cancel Confirmation",
+      "Are you sure you want to cancel?",
+      [
+        { text: "No", style: "cancel" },
+        {
+          text: "Yes",
+          onPress: () => {
+            onCancel();
+            setText("");  // Clear TextInput after canceling
+          },
+        },
+      ]
+    );
   };
 
   return (
     <Modal animationType="slide" visible={isModalVisible} transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.innerContainer}>
+          {/* 
+            Network image loaded from a URL. 
+            The alt prop provides a description of the image for accessibility purposes.
+          */}
+          <Image
+            source={{ uri: "https://cdn-icons-png.flaticon.com/512/2617/2617812.png" }}
+            style={styles.image}
+            alt="Target from Network"
+          />
+          {/* 
+            Local image loaded from the project assets. 
+            As mentioned above, the alt prop is a description of the image.
+          */}
+          <Image
+            source={require("../assets/target.png")}
+            style={styles.image}
+            alt="Local Target"
+          />
+
           <TextInput
             autoFocus={textInputFocus}
             placeholder="Type something"
@@ -26,31 +62,22 @@ export default function Input({ textInputFocus, onConfirm, isModalVisible }) {
             style={styles.input}
             value={text}
             onChangeText={updateText}
-            onBlur={() => {
-              setBlur(true);
-            }}
-            onFocus={() => {
-              setBlur(false);
-            }}
           />
 
           <View style={styles.buttonContainer}>
             <Button
+              onPress={handleCancel}
+              title="Cancel"
+              color="#007AFF"
+            />
+            <View style={styles.buttonSpacing} />
+            <Button
               onPress={handleConfirm}
               title="Confirm"
-              color="#007AFF" 
+              color="#007AFF"
+              disabled={isConfirmDisabled}  // Disable Confirm by default
             />
           </View>
-
-          {blur ? (
-            text.length >= 3 ? (
-              <Text style={styles.text}>Thank you</Text>
-            ) : (
-              <Text style={styles.text}>Please type more than 3 characters</Text>
-            )
-          ) : (
-            text && <Text style={styles.text}>{text.length}</Text>
-          )}
         </View>
       </View>
     </Modal>
@@ -94,7 +121,15 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   buttonContainer: {
-    width: '60%', 
-    marginVertical: 10,
+    flexDirection: "row",  // Arrange buttons horizontally
+    justifyContent: "space-between",
+  },
+  buttonSpacing: {
+    width: 10,  // Add space between Cancel and Confirm buttons
+  },
+  image: {
+    width: 100,
+    height: 100,
+    marginBottom: 20,
   },
 });

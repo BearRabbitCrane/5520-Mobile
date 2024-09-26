@@ -14,12 +14,16 @@ export default function App() {
     setIsModalVisible(false);
   };
 
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
+
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
       
       <View style={styles.topSection}>
@@ -34,9 +38,10 @@ export default function App() {
       <Input
         textInputFocus={true}
         onConfirm={handleInputData}
+        onCancel={handleCancel}
         isModalVisible={isModalVisible}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
