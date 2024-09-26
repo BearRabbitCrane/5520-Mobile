@@ -1,8 +1,9 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, View, Button, SafeAreaView, FlatList } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
+import GoalItem from "./components/GoalItem";  // Import the new GoalItem component
 
 export default function App() {
   const appName = "My app";
@@ -43,17 +44,13 @@ export default function App() {
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
-     <View style={styles.bottomSection}>
-      {/* Use FlatList to render the goals */}
-      <FlatList
-        data={goals}  // Pass the goals array as data
-        renderItem={({ item }) => (  // Destructure the item from the renderItem object
-          <View style={[styles.textContainer, { width: item.text.length * 10 + 40 }]}>
-            <Text style={styles.inputText}>{item.text}</Text>
-          </View>
-        )}
-        keyExtractor={(item) => item.id}  // Use id as the key extractor
-      />
+      <View style={styles.bottomSection}>
+        {/* Use FlatList to render the goals */}
+        <FlatList
+          data={goals}  // Pass the goals array as data
+          renderItem={({ item }) => <GoalItem text={item.text} />}  // Render GoalItem component for each goal
+          keyExtractor={(item) => item.id}  // Use id as the key extractor
+        />
       </View>
 
       <Input
@@ -81,18 +78,5 @@ const styles = StyleSheet.create({
     flex: 3.5,
     backgroundColor: "pink",
     width: "100%",  // Make sure section takes full width
-  },
-  textContainer: {
-    backgroundColor: "#aaa",  // Apply background color to the View
-    borderRadius: 10,  // Apply rounded corners to the View
-    padding: 10,  // Add padding around the Text
-    marginVertical: 10,  // Add some vertical margin for spacing
-    alignItems: "center",  // Center the text horizontally inside the View
-    alignSelf: "center",  // Center the goal containers
-  },
-  inputText: {
-    fontSize: 18,
-    color: "steelblue",  // Text color
-    textAlign: "center",  // Center the text within the container
   },
 });
