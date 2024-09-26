@@ -1,21 +1,40 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
+import { StyleSheet, View, Button, SafeAreaView, FlatList } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
+import GoalItem from "./components/GoalItem";  // Import the new GoalItem component
 
 export default function App() {
   const appName = "My app";
-  const [inputData, setInputData] = useState("");
+  const [goals, setGoals] = useState([]);  // Array to store multiple goals
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Callback function when user adds a goal
   const handleInputData = (data) => {
-    setInputData(data);
-    setIsModalVisible(false);
+    // Create a new goal object with text and random id
+    const newGoal = {
+      text: data,  // User input
+      id: Math.random().toString(),  // Random number as id
+    };
+
+    // Add the new goal object to the goals array using the spread operator
+    setGoals((currentGoals) => [
+      ...currentGoals,
+      newGoal,
+    ]);
+
+    setIsModalVisible(false);  // Close the modal after adding the goal
+  };
+
+  // Function to delete a goal by id
+  const handleDeleteGoal = (id) => {
+    // Update goals array by filtering out the goal with the matching id
+    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);
+    setIsModalVisible(false);  // Close the modal without adding a goal
   };
 
   const showModal = () => {
@@ -25,18 +44,25 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-      
+
       <View style={styles.topSection}>
         <Header name={appName} />
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
       <View style={styles.bottomSection}>
-        {inputData !== "" && (
-          <View style={styles.textContainer}>
-            <Text style={styles.inputText}>{inputData}</Text>
-          </View>
-        )}
+        {/* Use FlatList to render the goals */}
+        <FlatList
+          data={goals}  // Pass the goals array as data
+          renderItem={({ item }) => (
+            <GoalItem 
+              text={item.text} 
+              id={item.id} 
+              onDelete={handleDeleteGoal}  // Pass the delete handler to GoalItem
+            />
+          )}
+          keyExtractor={(item) => item.id}  // Use id as the key extractor
+        />
       </View>
 
       <Input
@@ -52,31 +78,17 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff", 
+    backgroundColor: "#fff",
   },
   topSection: {
-    flex: 1, 
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
   },
   bottomSection: {
-    flex: 4,
+    flex: 3.5,
     backgroundColor: "pink",
-    alignContent: "center",
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  textContainer: {
-    backgroundColor: "#aaa",  // Apply background color to the View
-    borderRadius: 10,  // Apply rounded corners to the View
-    padding: 10,  // Add padding around the Text
-    marginVertical: 10,  // Add some vertical margin for spacing
-    alignItems: "center",  // Center the text horizontally inside the View
-  },
-  inputText: {
-    fontSize: 18,
-    color: "steelblue",  // Text color
-    textAlign: "center",  // Center the text within the container
+    width: "100%",  // Make sure section takes full width
   },
 });
