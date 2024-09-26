@@ -49,8 +49,9 @@ export default function App() {
           data={goals}
           keyExtractor={(item) => item.id}  // Use unique id as key
           renderItem={({ item }) => (
-            <View style={styles.textContainer}>
-              <Text style={styles.inputText}>{item.text}</Text>  {/* Display goal text */}
+            <View style={[styles.textContainer, { width: item.text.length * 10 + 30 }]}>
+              {/* Ensure that goal text is rendered inside a <Text> component */}
+              <Text style={styles.inputText}>{item.text}</Text>
             </View>
           )}
         />
