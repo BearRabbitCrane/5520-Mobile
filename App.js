@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, ScrollView } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -43,18 +43,17 @@ export default function App() {
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
-     {/* Wrap the list of goals in ScrollView */}
-      <ScrollView 
-        style={styles.bottomSection} 
-        contentContainerStyle={styles.scrollContainer}  // Apply alignItems and justifyContent here
-        showsVerticalScrollIndicator={true}  // Shows the vertical scroll indicator
-      >
-        {goals.map((item) => (
-          <View key={item.id} style={[styles.textContainer, { width: item.text.length * 10 + 40 }]}>
+      {/* Use FlatList to render the goals */}
+      <FlatList
+        style={styles.bottomSection}
+        data={goals}  // Pass the goals array as data
+        renderItem={({ item }) => (  // Destructure the item from the renderItem object
+          <View style={[styles.textContainer, { width: item.text.length * 10 + 40 }]}>
             <Text style={styles.inputText}>{item.text}</Text>
           </View>
-        ))}
-      </ScrollView>
+        )}
+        keyExtractor={(item) => item.id}  // Use id as the key extractor
+      />
 
       <Input
         textInputFocus={true}
@@ -72,7 +71,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   topSection: {
-    //flex: 1, 
+    //flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
@@ -80,14 +79,7 @@ const styles = StyleSheet.create({
   bottomSection: {
     flex: 4,
     backgroundColor: "pink",
-    //justifyContent: "center",
     width: "100%",  // Make sure section takes full width
-  },
-  scrollContainer: {
-    alignItems: "flex-start",  // Align items to the top left
-    paddingTop: 10,  // Add some padding at the top to move the goals up
-    paddingHorizontal: 20,  // Padding on the sides to keep text away from edges
-    justifyContent: "center",
   },
   textContainer: {
     backgroundColor: "#aaa",  // Apply background color to the View
