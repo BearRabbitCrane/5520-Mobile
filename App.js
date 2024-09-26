@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -43,18 +43,14 @@ export default function App() {
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
-      {/* Display the list of goals */}
+      {/* Display the list of goals using map() */}
       <View style={styles.bottomSection}>
-        <FlatList
-          data={goals}
-          keyExtractor={(item) => item.id}  // Use unique id as key
-          renderItem={({ item }) => (
-            <View style={[styles.textContainer, { width: item.text.length * 10 + 30 }]}>
-              {/* Ensure that goal text is rendered inside a <Text> component */}
-              <Text style={styles.inputText}>{item.text}</Text>
-            </View>
-          )}
-        />
+        {goals.map((item) => (
+          <View key={item.id} style={[styles.textContainer, { width: item.text.length * 10 + 50 }]}>
+            {/* Ensure all text is wrapped in <Text> */}
+            <Text style={styles.inputText}>{item.text}</Text>
+          </View>
+        ))}
       </View>
 
       <Input
@@ -83,8 +79,8 @@ const styles = StyleSheet.create({
     backgroundColor: "pink",
     alignContent: "center",
     alignItems: "center",
-    justifyContent: "center",
-    width: "100%",  // Make sure FlatList takes full width
+    //justifyContent: "center",
+    width: "100%",  // Make sure section takes full width
   },
   textContainer: {
     backgroundColor: "#aaa",  // Apply background color to the View
@@ -92,8 +88,7 @@ const styles = StyleSheet.create({
     padding: 10,  // Add padding around the Text
     marginVertical: 10,  // Add some vertical margin for spacing
     alignItems: "center",  // Center the text horizontally inside the View
-    width: "90%",  // Give the container a width
-    alignSelf: "center",  // Center the goal containers within the FlatList
+    alignSelf: "center",  // Center the goal containers
   },
   inputText: {
     fontSize: 18,
