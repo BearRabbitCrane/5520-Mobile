@@ -58,7 +58,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputText: {
+    marginTop: 15,
     fontSize: 18,
     color: "steelblue",
+    backgroundColor: "#aaa",
+    padding: 5,
+    borderRadius: 5,
   },
 });
