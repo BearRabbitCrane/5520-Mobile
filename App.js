@@ -43,9 +43,9 @@ export default function App() {
         <Button title="Add a goal" onPress={showModal} />
       </View>
 
+     <View style={styles.bottomSection}>
       {/* Use FlatList to render the goals */}
       <FlatList
-        style={styles.bottomSection}
         data={goals}  // Pass the goals array as data
         renderItem={({ item }) => (  // Destructure the item from the renderItem object
           <View style={[styles.textContainer, { width: item.text.length * 10 + 40 }]}>
@@ -54,6 +54,7 @@ export default function App() {
         )}
         keyExtractor={(item) => item.id}  // Use id as the key extractor
       />
+      </View>
 
       <Input
         textInputFocus={true}
@@ -71,13 +72,13 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   topSection: {
-    //flex: 1,
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
     paddingHorizontal: 20,
   },
   bottomSection: {
-    flex: 4,
+    flex: 3.5,
     backgroundColor: "pink",
     width: "100%",  // Make sure section takes full width
   },
