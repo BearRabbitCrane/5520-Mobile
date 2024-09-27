@@ -106,6 +106,9 @@ export default function App() {
               </TouchableOpacity>
             </View>
           )}
+
+          // Separator between each item
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>
 
@@ -171,5 +174,12 @@ const styles = StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     fontSize: 16,
+  },
+  separator: {
+    height: 1,
+    width: "90%",
+    backgroundColor: "#ac00e6",
+    alignSelf: "center",
+    marginVertical: 10,
   },
 });
