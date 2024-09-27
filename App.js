@@ -63,6 +63,13 @@ export default function App() {
           )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
 
+          // Conditionally display the header if goals exist
+          ListHeaderComponent={() => goals.length > 0 && (
+            <View style={styles.header}>
+              <Text style={styles.headerText}>My goals</Text>
+            </View>
+          )}
+
           // Display a message if no goals are present
           ListEmptyComponent={() => (
             <View style={styles.emptyList}>
@@ -97,6 +104,16 @@ const styles = StyleSheet.create({
     flex: 3.5,
     backgroundColor: "pink",
     width: "100%",  // Make sure section takes full width
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "purple",
   },
   emptyList: {
     justifyContent: "center",
