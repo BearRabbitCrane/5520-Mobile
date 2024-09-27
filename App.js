@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity, Alert } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -31,6 +31,27 @@ export default function App() {
   const handleDeleteGoal = (id) => {
     // Update goals array by filtering out the goal with the matching id
     setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
+  };
+
+  // Function to show an alert and delete all goals if user confirms
+  const handleDeleteAll = () => {
+    Alert.alert(
+      "Delete all goals",  // Alert title
+      "Are you sure you want to delete all goals?",  // Alert message
+      [
+        {
+          text: "No",  // No button
+          style: "cancel",  // Cancel button style
+        },
+        {
+          text: "Yes",  // Yes button
+          onPress: () => {
+            setGoals([]);  // Clear the goals array
+          },
+        },
+      ],
+      { cancelable: true }  // Alert can be dismissed by tapping outside
+    );
   };
 
   const handleCancel = () => {
@@ -80,9 +101,9 @@ export default function App() {
           // Conditionally display the footer if goals exist
           ListFooterComponent={() => goals.length > 0 && (
             <View style={styles.footer}>
-              
-              <Button title="Delete All" />
-              
+              <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteAllButton}>
+                <Text style={styles.deleteAllText}>Delete All</Text>
+              </TouchableOpacity>
             </View>
           )}
         />
@@ -139,5 +160,16 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     marginVertical: 20,
+  },
+  deleteAllButton: {
+    backgroundColor: "red",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+  },
+  deleteAllText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
   },
 });
