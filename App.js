@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Button, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -62,6 +62,13 @@ export default function App() {
             />
           )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
+
+          // Display a message if no goals are present
+          ListEmptyComponent={() => (
+            <View style={styles.emptyList}>
+              <Text style={styles.emptyText}>No goals to show</Text>
+            </View>
+          )}
         />
       </View>
 
@@ -90,5 +97,17 @@ const styles = StyleSheet.create({
     flex: 3.5,
     backgroundColor: "pink",
     width: "100%",  // Make sure section takes full width
+  },
+  emptyList: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    marginTop: 10,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "#00b377",
+    fontStyle: "italic",
+    fontWeight: "bold",
   },
 });
