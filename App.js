@@ -76,6 +76,15 @@ export default function App() {
               <Text style={styles.emptyText}>No goals to show</Text>
             </View>
           )}
+
+          // Conditionally display the footer if goals exist
+          ListFooterComponent={() => goals.length > 0 && (
+            <View style={styles.footer}>
+              
+              <Button title="Delete All" />
+              
+            </View>
+          )}
         />
       </View>
 
@@ -126,5 +135,9 @@ const styles = StyleSheet.create({
     color: "#00b377",
     fontStyle: "italic",
     fontWeight: "bold",
+  },
+  footer: {
+    alignItems: 'center',
+    marginVertical: 20,
   },
 });
