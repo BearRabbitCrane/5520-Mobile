@@ -16,17 +16,21 @@ const App = () => {
           name="Home"  // Screen name
           component={Home}  // Home component
           options={{
-            title: 'Welcome to My Goals App',  // Custom title for the navigation bar
+            title: 'All My Goals',  // Custom title for the navigation bar
             headerStyle: { backgroundColor: '#4a148c' },  // Background color of the header
             headerTintColor: '#fff',  // Font color of the header text
           }}
         />
         
-        {/* Define the GoalDetails screen */}
-        <Stack.Screen 
-          name="GoalDetails"  // Arbitrary name for the GoalDetails screen
-          component={GoalDetails}  // GoalDetails component
-          options={{ title: 'Details' }}  // Optional: Customize header title for GoalDetails
+        {/* GoalDetails screen with dynamic title */}
+        <Stack.Screen
+          name="GoalDetails"
+          component={GoalDetails}
+          options={({ route }) => ({
+            title: route.params.goal.text,  // Set the goal text as the header title
+            headerStyle: { backgroundColor: '#4a148c' },  // Same header style
+            headerTintColor: '#fff',  // White text for header
+          })}
         />
       </Stack.Navigator>
     </NavigationContainer>
