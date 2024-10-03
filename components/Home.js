@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: "gray",
+    color: "00b377",
     fontStyle: "italic",
     fontWeight: "bold",
   },
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
   separator: {
     height: 1,
     width: "90%",
-    backgroundColor: "#CED0CE",
+    backgroundColor: "#ac00e6",
     alignSelf: "center",
     marginVertical: 10,
   },
