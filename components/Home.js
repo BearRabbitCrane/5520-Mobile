@@ -63,8 +63,8 @@ const Home = ({ navigation }) => {
   };
 
   // Callback to navigate to GoalDetails screen
-  const handleNavigateToDetails = (goalId) => {
-    navigation.navigate('GoalDetails', { goalId });  // Navigate to GoalDetails screen
+  const handleNavigateToDetails = (goal) => {
+    navigation.navigate('GoalDetails', { goal });  // Pass the entire goal object
   };
 
   return (
@@ -126,7 +126,7 @@ const Home = ({ navigation }) => {
       />
     </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   },
   emptyText: {
     fontSize: 18,
-    color: "00b377",
+    color: "#00b377",
     fontStyle: "italic",
     fontWeight: "bold",
   },

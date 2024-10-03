@@ -2,15 +2,18 @@ import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
 const GoalItem = ({ text, id, onDelete, onNavigate }) => {
+  const goalObject = { text, id };  // Create the goal object to pass
+
   return (
     <View style={styles.textContainer}>
-      {/* Goal text */}
       <Text style={styles.inputText}>{text}</Text>
 
-      {/* Button container for X and i buttons */}
+      {/* Container for the buttons */}
       <View style={styles.buttonContainer}>
+        {/* Delete button */}
         <Button title="X" onPress={() => onDelete(id)} color="red" />
-        <Button title="i" onPress={() => onNavigate(id)} color="blue" />
+        {/* Navigate to details and pass the goal object */}
+        <Button title="i" onPress={() => onNavigate(goalObject)} color="blue" />
       </View>
     </View>
   );
@@ -18,24 +21,24 @@ const GoalItem = ({ text, id, onDelete, onNavigate }) => {
 
 const styles = StyleSheet.create({
   textContainer: {
-    flexDirection: "row",  // Arrange text and buttons in a row
-    alignItems: "center",  // Align items vertically center
-    backgroundColor: "#aaa",  // Grey background
-    borderRadius: 10,  // Rounded corners for the container
-    padding: 10,  // Padding inside the container
-    marginVertical: 10,  // Vertical margin for spacing
-    alignSelf: "center",  // Make the container only as wide as its content
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#aaa",
+    borderRadius: 10,
+    padding: 10,
+    marginVertical: 10,
+    alignSelf: "center",
   },
   inputText: {
     fontSize: 18,
-    color: "steelblue",  // Text color
-    marginRight: 10,  // Add some space between the text and the buttons
+    color: "steelblue",
+    marginRight: 10,
   },
   buttonContainer: {
-    flexDirection: "row",  // Arrange buttons horizontally
-    backgroundColor: "#ccc",  // Background color for button container
-    borderRadius: 5,  // Rounded corners for button container
-    padding: 5,  // Padding around buttons
+    flexDirection: "row",
+    backgroundColor: "#ccc",
+    borderRadius: 5,
+    padding: 5,
   },
 });
 
