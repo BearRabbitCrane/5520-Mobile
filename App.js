@@ -3,16 +3,20 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';  // Import createNativeStackNavigator
 import Home from './components/Home';  // Import Home component
 
-// Call createNativeStackNavigator outside the App function
-const Stack = createNativeStackNavigator();  // Create the Stack Navigator
+// Create the Stack Navigator
+const Stack = createNativeStackNavigator();
 
-// Define App as a functional component
 const App = () => {
   return (
     <NavigationContainer>
+      {/* Nest Stack.Navigator inside NavigationContainer */}
       <Stack.Navigator>
-        {/* Define your screens inside Stack.Navigator */}
-        <Stack.Screen name="Home" component={Home} /> 
+        {/* Define the Home screen */}
+        <Stack.Screen 
+          name="Home"  // Screen name
+          component={Home}  // Component to render (do not use JSX here)
+          options={{ title: 'Home Page' }}  // Optional: Customize header title
+        />
         {/* You can add more screens here */}
       </Stack.Navigator>
     </NavigationContainer>
