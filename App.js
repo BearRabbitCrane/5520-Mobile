@@ -1,36 +1,48 @@
 import React from 'react';
+import { Button, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Home from './components/Home';  // Import Home component
-import GoalDetails from './components/GoalDetails';  // Import GoalDetails component
+import Home from './components/Home';
+import GoalDetails from './components/GoalDetails';
 
-// Create the Stack Navigator
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* Define the Home screen with customized header options */}
+        {/* Home screen */}
         <Stack.Screen 
-          name="Home"  // Screen name
-          component={Home}  // Home component
+          name="Home"
+          component={Home}
           options={{
-            title: 'All My Goals',  // Custom title for the navigation bar
-            headerStyle: { backgroundColor: '#4a148c' },  // Background color of the header
-            headerTintColor: '#fff',  // Font color of the header text
+            title: 'All My Goals',
+            headerStyle: { backgroundColor: '#4a148c' },
+            headerTintColor: '#fff',
           }}
         />
-        
-        {/* GoalDetails screen with dynamic title */}
+
+        {/* GoalDetails screen */}
         <Stack.Screen
           name="GoalDetails"
           component={GoalDetails}
-          options={({ route }) => ({
-            title: route.params.goal.text,  // Set the goal text as the header title
-            headerStyle: { backgroundColor: '#4a148c' },  // Same header style
-            headerTintColor: '#fff',  // White text for header
-          })}
+          options={({ route }) => {
+            // Set title to 'More Details' if navigating from the "More Details" button
+            const isMoreDetails = route.params && route.params.isMoreDetails;
+
+            return {
+              title: isMoreDetails ? 'More Details' : route.params.goal.text,  // Fixed title if from "More Details", otherwise dynamic
+              headerRight: () => (
+                <Button
+                  onPress={() => Alert.alert('More Info', 'You pressed the header button!')}
+                  title="Info"
+                  color="#fff"
+                />
+              ),
+              headerStyle: { backgroundColor: '#4a148c' },
+              headerTintColor: '#fff',
+            };
+          }}
         />
       </Stack.Navigator>
     </NavigationContainer>
