@@ -11,18 +11,22 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        {/* Define the Home screen */}
+        {/* Define the Home screen with customized header options */}
         <Stack.Screen 
-          name="Home"  // Name for the Home screen
+          name="Home"  // Screen name
           component={Home}  // Home component
-          options={{ title: 'Home Page' }}  // Optional: Customize header title
+          options={{
+            title: 'Welcome to My Goals App',  // Custom title for the navigation bar
+            headerStyle: { backgroundColor: '#4a148c' },  // Background color of the header
+            headerTintColor: '#fff',  // Font color of the header text
+          }}
         />
         
         {/* Define the GoalDetails screen */}
         <Stack.Screen 
           name="GoalDetails"  // Arbitrary name for the GoalDetails screen
           component={GoalDetails}  // GoalDetails component
-          options={{ title: 'Goal Details' }}  // Optional: Customize header title
+          options={{ title: 'Details' }}  // Optional: Customize header title for GoalDetails
         />
       </Stack.Navigator>
     </NavigationContainer>
