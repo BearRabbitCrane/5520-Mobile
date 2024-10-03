@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, View, Button, SafeAreaView, FlatList } from "react-native";
+import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity, Alert } from "react-native";
 import Header from "./components/Header";
 import { useState } from "react";
 import Input from "./components/Input";
@@ -33,6 +33,27 @@ export default function App() {
     setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
   };
 
+  // Function to show an alert and delete all goals if user confirms
+  const handleDeleteAll = () => {
+    Alert.alert(
+      "Delete all goals",  // Alert title
+      "Are you sure you want to delete all goals?",  // Alert message
+      [
+        {
+          text: "No",  // No button
+          style: "cancel",  // Cancel button style
+        },
+        {
+          text: "Yes",  // Yes button
+          onPress: () => {
+            setGoals([]);  // Clear the goals array
+          },
+        },
+      ],
+      { cancelable: true }  // Alert can be dismissed by tapping outside
+    );
+  };
+
   const handleCancel = () => {
     setIsModalVisible(false);  // Close the modal without adding a goal
   };
@@ -62,6 +83,32 @@ export default function App() {
             />
           )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
+
+          // Conditionally display the header if goals exist
+          ListHeaderComponent={() => goals.length > 0 && (
+            <View style={styles.header}>
+              <Text style={styles.headerText}>My goals</Text>
+            </View>
+          )}
+
+          // Display a message if no goals are present
+          ListEmptyComponent={() => (
+            <View style={styles.emptyList}>
+              <Text style={styles.emptyText}>No goals to show</Text>
+            </View>
+          )}
+
+          // Conditionally display the footer if goals exist
+          ListFooterComponent={() => goals.length > 0 && (
+            <View style={styles.footer}>
+              <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteAllButton}>
+                <Text style={styles.deleteAllText}>Delete All</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+
+          // Separator between each item
+          ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>
 
@@ -90,5 +137,49 @@ const styles = StyleSheet.create({
     flex: 3.5,
     backgroundColor: "pink",
     width: "100%",  // Make sure section takes full width
+  },
+  header: {
+    alignItems: 'center',
+    marginTop: 20,
+    marginBottom: 10,
+  },
+  headerText: {
+    fontSize: 24,
+    fontWeight: "bold",
+    color: "purple",
+  },
+  emptyList: {
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+    marginTop: 10,
+  },
+  emptyText: {
+    fontSize: 18,
+    color: "#00b377",
+    fontStyle: "italic",
+    fontWeight: "bold",
+  },
+  footer: {
+    alignItems: 'center',
+    marginVertical: 20,
+  },
+  deleteAllButton: {
+    backgroundColor: "red",
+    paddingVertical: 10,
+    paddingHorizontal: 30,
+    borderRadius: 20,
+  },
+  deleteAllText: {
+    color: "white",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  separator: {
+    height: 1,
+    width: "90%",
+    backgroundColor: "#ac00e6",
+    alignSelf: "center",
+    marginVertical: 10,
   },
 });
