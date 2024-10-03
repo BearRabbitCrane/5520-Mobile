@@ -2,12 +2,15 @@ import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
 const GoalDetails = ({ route }) => {
-  const { goalId } = route.params;  // Get goalId from route params
+  // Extract the goal object passed via navigation
+  const { goal } = route.params;
 
   return (
     <View style={styles.container}>
-      <Text style={styles.detailsText}>Goal ID: {goalId}</Text>
-      {/* Here, you can fetch and display more details based on goalId */}
+      <Text style={styles.title}>Goal Details</Text>
+      {/* Display goal details */}
+      <Text style={styles.detailText}>ID: {goal.id}</Text>
+      <Text style={styles.detailText}>Text: {goal.text}</Text>
     </View>
   );
 };
@@ -17,10 +20,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f5f5f5',
+    padding: 20,
   },
-  detailsText: {
+  title: {
     fontSize: 24,
     fontWeight: 'bold',
+    marginBottom: 20,
+  },
+  detailText: {
+    fontSize: 18,
+    marginVertical: 5,
   },
 });
 
