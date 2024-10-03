@@ -5,7 +5,7 @@ import { useState } from "react";
 import Input from "./Input";  // Import the Input component
 import GoalItem from "./GoalItem";  // Import the GoalItem component
 
-const Home = () => {
+const Home = ({ navigation }) => {
   const appName = "My app";
   const [goals, setGoals] = useState([]);  // Array to store multiple goals
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -62,6 +62,11 @@ const Home = () => {
     setIsModalVisible(true);
   };
 
+  // Callback to navigate to GoalDetails screen
+  const handleNavigateToDetails = (goalId) => {
+    navigation.navigate('GoalDetails', { goalId });  // Navigate to GoalDetails screen
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
@@ -80,6 +85,7 @@ const Home = () => {
               text={item.text} 
               id={item.id} 
               onDelete={handleDeleteGoal}  // Pass the delete handler to GoalItem
+              onNavigate={handleNavigateToDetails}  // Pass navigation callback to GoalItem
             />
           )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
