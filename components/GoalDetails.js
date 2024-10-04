@@ -1,15 +1,30 @@
-import React from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
 
 const GoalDetails = ({ route, navigation }) => {
   // Extract the goal object passed via navigation
   const { goal } = route.params;
+  const [textColor, setTextColor] = useState("black");  // State to control text color
+
+  // Function to change text color and update header title
+  const handleWarningPress = () => {
+    setTextColor("red");  // Change text color to red
+    navigation.setOptions({ title: "Warning!" });  // Update header title
+  };
+
+   // Define the button in the header using useLayoutEffect
+   useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Button title="Warn" onPress={handleWarningPress} color="#fff" />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Goal Details</Text>
-      <Text style={styles.detailText}>ID: {goal.id}</Text>
-      <Text style={styles.detailText}>Text: {goal.text}</Text>
+      <Text style={[styles.detailText, { color: textColor }]}>ID: {goal.id}</Text>
+      <Text style={[styles.detailText, { color: textColor }]}>Text: {goal.text}</Text>
 
       {/* Button to push another instance of GoalDetails on the stack */}
       <Button
