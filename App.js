@@ -1,5 +1,4 @@
 import React from 'react';
-import { Button, Alert } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './components/Home';
@@ -14,13 +13,6 @@ const App = () => {
         screenOptions={{
           headerStyle: { backgroundColor: '#4a148c' },  // Global header background color
           headerTintColor: '#fff',  // Global header text color
-          headerRight: () => (
-            <Button
-              onPress={() => Alert.alert('More Info', 'You pressed the header button!')}
-              title="Info"
-              color="#fff"
-            />
-          ),
         }}
       >
         {/* Home screen with unique title */}
