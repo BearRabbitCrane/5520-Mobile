@@ -16,7 +16,7 @@ const GoalDetails = ({ route, navigation }) => {
         title="More Details"
         onPress={() => {
           // Navigate to a new instance of GoalDetails
-          navigation.push('GoalDetails', { goal });
+          navigation.push('GoalDetails', { goal, isMoreDetails: true });
         }}
       />
     </View>
