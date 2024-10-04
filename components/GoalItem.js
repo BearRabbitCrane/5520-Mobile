@@ -1,7 +1,9 @@
 import React from 'react';
 import { View, Text, Button, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
-const GoalItem = ({ text, id, onDelete, onNavigate }) => {
+const GoalItem = ({ text, id, onDelete }) => {
+  const navigation = useNavigation();  // Get navigation object using useNavigation hook
   const goalObject = { text, id };  // Create the goal object to pass
 
   return (
@@ -12,8 +14,8 @@ const GoalItem = ({ text, id, onDelete, onNavigate }) => {
       <View style={styles.buttonContainer}>
         {/* Delete button */}
         <Button title="X" onPress={() => onDelete(id)} color="red" />
-        {/* Navigate to details and pass the goal object */}
-        <Button title="i" onPress={() => onNavigate(goalObject)} color="blue" />
+        {/* Navigate directly to GoalDetails */}
+        <Button title="i" onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })} color="blue" />
       </View>
     </View>
   );
