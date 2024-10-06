@@ -85,7 +85,6 @@ const Home = ({ navigation }) => {
               text={item.text} 
               id={item.id} 
               onDelete={handleDeleteGoal}  // Pass the delete handler to GoalItem
-              onNavigate={handleNavigateToDetails}  // Pass navigation callback to GoalItem
             />
           )}
           keyExtractor={(item) => item.id}  // Use id as the key extractor
