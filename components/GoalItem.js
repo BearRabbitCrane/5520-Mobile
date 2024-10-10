@@ -10,10 +10,13 @@ const GoalItem = ({ text, id, onDelete }) => {
     <Pressable
       onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
-      style={({ pressed }) => [
-        styles.textContainer,
-        pressed && styles.pressedItem,  // Apply pressed state style if pressed
-      ]}
+      style={({ pressed }) => {
+        // Explicit return of an array with the styles
+        return [
+          styles.textContainer,
+          pressed && styles.pressedItem,  // Apply pressed state style if pressed
+        ];
+      }}
     >
       <View style={styles.innerContainer}>
         <Text style={styles.inputText}>{text}</Text>
