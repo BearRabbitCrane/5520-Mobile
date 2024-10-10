@@ -1,6 +1,7 @@
 import React from 'react';
-import { Pressable, View, Text, Button, StyleSheet } from 'react-native';
+import { Pressable, View, Text, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import PressableButton from './PressableButton';  // Import the new PressableButton component
 
 const GoalItem = ({ text, id, onDelete }) => {
   const navigation = useNavigation();  // Get navigation object using useNavigation hook
@@ -11,7 +12,6 @@ const GoalItem = ({ text, id, onDelete }) => {
       onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
       style={({ pressed }) => {
-        // Explicit return of an array with the styles
         return [
           styles.textContainer,
           pressed && styles.pressedItem,  // Apply pressed state style if pressed
@@ -21,11 +21,8 @@ const GoalItem = ({ text, id, onDelete }) => {
       <View style={styles.innerContainer}>
         <Text style={styles.inputText}>{text}</Text>
 
-        {/* Container for the delete button */}
-        <View style={styles.buttonContainer}>
-          {/* Delete button */}
-          <Button title="X" onPress={() => onDelete(id)} color="red" />
-        </View>
+        {/* Reuse PressableButton for delete */}
+        <PressableButton title="X" onPress={() => onDelete(id)} />
       </View>
     </Pressable>
   );
@@ -53,12 +50,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "steelblue",
     marginRight: 10,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    backgroundColor: "#ccc",
-    borderRadius: 5,
-    padding: 5,
   },
 });
 
