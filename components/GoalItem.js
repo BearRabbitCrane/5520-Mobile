@@ -10,8 +10,12 @@ const GoalItem = ({ text, id, onDelete }) => {
     <Pressable
       onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
+      style={({ pressed }) => [
+        styles.textContainer,
+        pressed && styles.pressedItem,  // Apply pressed state style if pressed
+      ]}
     >
-      <View style={styles.textContainer}>
+      <View style={styles.innerContainer}>
         <Text style={styles.inputText}>{text}</Text>
 
         {/* Container for the delete button */}
@@ -33,6 +37,14 @@ const styles = StyleSheet.create({
     padding: 10,
     marginVertical: 10,
     alignSelf: "center",
+  },
+  pressedItem: {
+    opacity: 0.5,  // Change opacity when pressed
+  },
+  innerContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   inputText: {
     fontSize: 18,
