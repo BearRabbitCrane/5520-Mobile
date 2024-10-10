@@ -1,14 +1,34 @@
 import React from 'react';
-import { View, Text, StyleSheet, Pressable, Platform } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Platform } from 'react-native';
 import PressableButton from './PressableButton';  // Import your custom button
 import { useNavigation } from '@react-navigation/native';
 
 const GoalItem = ({ text, id, onDelete }) => {
   const navigation = useNavigation();  // Get navigation object using the hook
 
+  // Function to confirm and delete the goal on long press
+  const handleLongPress = () => {
+    Alert.alert(
+      'Delete Goal',
+      `Are you sure you want to delete "${text}"?`,  // Show the goal text in the confirmation
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',  // Cancel button, closes the alert
+        },
+        {
+          text: 'Delete',
+          onPress: () => onDelete(id),  // Call the delete function if confirmed
+          style: 'destructive',  // Make the delete button red (iOS)
+        },
+      ]
+    );
+  };
+
   return (
     <Pressable
       onPress={() => navigation.navigate('GoalDetails', { goal: { text, id } })}
+      onLongPress={handleLongPress}  // Trigger deletion confirmation on long press
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
       style={({ pressed }) => {
         // Return an array of styles with specific press feedback for iOS
