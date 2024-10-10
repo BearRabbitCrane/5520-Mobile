@@ -7,7 +7,10 @@ const GoalItem = ({ text, id, onDelete }) => {
   const goalObject = { text, id };  // Create the goal object to pass
 
   return (
-    <Pressable onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}>
+    <Pressable
+      onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}
+      android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
+    >
       <View style={styles.textContainer}>
         <Text style={styles.inputText}>{text}</Text>
 
