@@ -1,118 +1,81 @@
+import React from 'react';
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity, Alert } from "react-native";
-import Header from "./Header";  // Import the Header component from the same folder
+import { StyleSheet, Text, View, SafeAreaView, FlatList, Alert } from "react-native";
+import Header from "./Header";  
 import { useState } from "react";
-import Input from "./Input";  // Import the Input component
-import GoalItem from "./GoalItem";  // Import the GoalItem component
+import Input from "./Input";  
+import GoalItem from "./GoalItem";  
+import PressableButton from "./PressableButton";  // Import PressableButton
 
 const Home = ({ navigation }) => {
   const appName = "My app";
-  const [goals, setGoals] = useState([]);  // Array to store multiple goals
+  const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  // Callback function when user adds a goal
   const handleInputData = (data) => {
-    // Create a new goal object with text and random id
     const newGoal = {
-      text: data,  // User input
-      id: Math.random().toString(),  // Random number as id
+      text: data,
+      id: Math.random().toString(),
     };
-
-    // Add the new goal object to the goals array using the spread operator
-    setGoals((currentGoals) => [
-      ...currentGoals,
-      newGoal,
-    ]);
-
-    setIsModalVisible(false);  // Close the modal after adding the goal
+    setGoals((currentGoals) => [...currentGoals, newGoal]);
+    setIsModalVisible(false);
   };
 
-  // Function to delete a goal by id
   const handleDeleteGoal = (id) => {
-    // Update goals array by filtering out the goal with the matching id
     setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
   };
 
-  // Function to show an alert and delete all goals if user confirms
   const handleDeleteAll = () => {
-    Alert.alert(
-      "Delete all goals",  // Alert title
-      "Are you sure you want to delete all goals?",  // Alert message
-      [
-        {
-          text: "No",  // No button
-          style: "cancel",  // Cancel button style
-        },
-        {
-          text: "Yes",  // Yes button
-          onPress: () => {
-            setGoals([]);  // Clear the goals array
-          },
-        },
-      ],
-      { cancelable: true }  // Alert can be dismissed by tapping outside
-    );
+    Alert.alert("Delete all goals", "Are you sure you want to delete all goals?", [
+      { text: "No", style: "cancel" },
+      { text: "Yes", onPress: () => setGoals([]) },
+    ]);
   };
 
   const handleCancel = () => {
-    setIsModalVisible(false);  // Close the modal without adding a goal
+    setIsModalVisible(false);
   };
 
   const showModal = () => {
     setIsModalVisible(true);
   };
 
-  // Callback to navigate to GoalDetails screen
-  const handleNavigateToDetails = (goal) => {
-    navigation.navigate('GoalDetails', { goal });  // Pass the entire goal object
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
-
       <View style={styles.topSection}>
         <Header name={appName} />
-        <Button title="Add a goal" onPress={showModal} />
+        {/* Text button for "Add a goal" */}
+        <PressableButton title="Add a goal" onPress={showModal} isDelete={false} />
       </View>
 
       <View style={styles.bottomSection}>
-        {/* Use FlatList to render the goals */}
         <FlatList
-          data={goals}  // Pass the goals array as data
+          data={goals}
           renderItem={({ item }) => (
             <GoalItem 
               text={item.text} 
               id={item.id} 
-              onDelete={handleDeleteGoal}  // Pass the delete handler to GoalItem
+              onDelete={handleDeleteGoal}  
             />
           )}
-          keyExtractor={(item) => item.id}  // Use id as the key extractor
-
-          // Conditionally display the header if goals exist
+          keyExtractor={(item) => item.id}
           ListHeaderComponent={() => goals.length > 0 && (
             <View style={styles.header}>
               <Text style={styles.headerText}>My goals</Text>
             </View>
           )}
-
-          // Display a message if no goals are present
           ListEmptyComponent={() => (
             <View style={styles.emptyList}>
               <Text style={styles.emptyText}>No goals to show</Text>
             </View>
           )}
-
-          // Conditionally display the footer if goals exist
           ListFooterComponent={() => goals.length > 0 && (
             <View style={styles.footer}>
-              <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteAllButton}>
-                <Text style={styles.deleteAllText}>Delete All</Text>
-              </TouchableOpacity>
+              {/* Text-based delete all button */}
+              <PressableButton title="Delete All" onPress={handleDeleteAll} isDelete={false} />
             </View>
           )}
-
-          // Separator between each item
           ItemSeparatorComponent={() => <View style={styles.separator} />}
         />
       </View>
@@ -141,7 +104,7 @@ const styles = StyleSheet.create({
   bottomSection: {
     flex: 3.5,
     backgroundColor: "pink",
-    width: "100%",  // Make sure section takes full width
+    width: "100%",
   },
   header: {
     alignItems: 'center',
@@ -168,17 +131,6 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     marginVertical: 20,
-  },
-  deleteAllButton: {
-    backgroundColor: "red",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-  },
-  deleteAllText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
   },
   separator: {
     height: 1,

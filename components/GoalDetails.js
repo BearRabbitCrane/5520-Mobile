@@ -1,5 +1,7 @@
 import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import PressableButton from './PressableButton';  // Reusable PressableButton component
 
 const GoalDetails = ({ route, navigation }) => {
   // Extract the goal object passed via navigation
@@ -12,11 +14,16 @@ const GoalDetails = ({ route, navigation }) => {
     navigation.setOptions({ title: "Warning!" });  // Update header title
   };
 
-   // Define the button in the header using useLayoutEffect
-   useLayoutEffect(() => {
+  // Define the button in the header using useLayoutEffect
+  useLayoutEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Button title="Warn" onPress={handleWarningPress} color="#fff" />
+        <PressableButton
+          onPress={handleWarningPress}
+          isDelete={false}  // This is not the delete button, use icon instead
+          icon={<Ionicons name="alert-circle" size={24} color="white" />}  // Use an alert icon for the "Warn" button
+          backgroundColor="#4B0082"
+        />
       ),
     });
   }, [navigation]);
@@ -27,12 +34,13 @@ const GoalDetails = ({ route, navigation }) => {
       <Text style={[styles.detailText, { color: textColor }]}>Text: {goal.text}</Text>
 
       {/* Button to push another instance of GoalDetails on the stack */}
-      <Button
+      <PressableButton
         title="More Details"
         onPress={() => {
           // Navigate to a new instance of GoalDetails
           navigation.push('GoalDetails', { goal, isMoreDetails: true });
         }}
+        isDelete={false}  // This is a normal button
       />
     </View>
   );
@@ -45,11 +53,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#f5f5f5',
     padding: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 20,
   },
   detailText: {
     fontSize: 18,
