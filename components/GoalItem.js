@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Button, StyleSheet } from 'react-native';
+import { Pressable, View, Text, Button, StyleSheet } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 const GoalItem = ({ text, id, onDelete }) => {
@@ -7,17 +7,19 @@ const GoalItem = ({ text, id, onDelete }) => {
   const goalObject = { text, id };  // Create the goal object to pass
 
   return (
-    <View style={styles.textContainer}>
-      <Text style={styles.inputText}>{text}</Text>
+    <Pressable onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })}>
+      <View style={styles.textContainer}>
+        <Text style={styles.inputText}>{text}</Text>
 
-      {/* Container for the buttons */}
-      <View style={styles.buttonContainer}>
-        {/* Delete button */}
-        <Button title="X" onPress={() => onDelete(id)} color="red" />
-        {/* Navigate directly to GoalDetails */}
-        <Button title="i" onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })} color="blue" />
+        {/* Container for the buttons */}
+        <View style={styles.buttonContainer}>
+          {/* Delete button */}
+          <Button title="X" onPress={() => onDelete(id)} color="red" />
+          {/* Navigate directly to GoalDetails */}
+          <Button title="i" onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })} color="blue" />
+        </View>
       </View>
-    </View>
+    </Pressable>
   );
 };
 
