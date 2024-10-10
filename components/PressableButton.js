@@ -1,22 +1,31 @@
 import React from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';  // Import Ionicons for the trash icon
+import { Ionicons } from '@expo/vector-icons';  // Import Ionicons for the trash and warning icons
 
-const PressableButton = ({ title, onPress, isDelete }) => {
+const PressableButton = ({ title, onPress, isDelete, icon, backgroundColor }) => {
   return (
     <Pressable
       onPress={onPress}
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
-      style={({ pressed }) => [
-        styles.button,
-        pressed && styles.pressedButton,  // Apply pressed state style if pressed
-      ]}
+      style={({ pressed }) => {
+        return [
+          
+          styles.button,
+          pressed && styles.pressedButton,  // Apply pressed state style if pressed
+          { backgroundColor: backgroundColor || '#4169E1' }, 
+        ];
+      }}
     >
       <View style={styles.buttonContent}>
-        {isDelete && (
-          <Ionicons name="trash" size={24} color="white" style={styles.icon} />
+        {icon ? (
+          icon  // Display custom icon if passed
+        ) : (
+          isDelete ? (
+            <Ionicons name="trash" size={24} color="white" style={styles.icon} />  // Trash icon for delete buttons
+          ) : (
+            <Text style={styles.buttonText}>{title}</Text>  // Text for non-delete buttons
+          )
         )}
-        {!isDelete && <Text style={styles.buttonText}>{title}</Text>}
       </View>
     </Pressable>
   );
@@ -32,7 +41,7 @@ const styles = StyleSheet.create({
   },
   pressedButton: {
     backgroundColor: '#9932CC',  // Change background color when pressed (Dark Orchid)
-    opacity: 0.7,  // Also change opacity when pressed
+    opacity: 0.5,  // Also change opacity when pressed
   },
   buttonText: {
     color: '#fff',
@@ -44,9 +53,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  icon: {
-    marginRight: 8,  // Add some spacing between icon and text if needed
   },
 });
 
