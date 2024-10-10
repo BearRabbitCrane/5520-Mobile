@@ -52,11 +52,12 @@ const Home = ({ navigation }) => {
       <View style={styles.bottomSection}>
         <FlatList
           data={goals}
-          renderItem={({ item }) => (
+          renderItem={({ item, separators }) => (
             <GoalItem 
               text={item.text} 
               id={item.id} 
-              onDelete={handleDeleteGoal}  
+              onDelete={handleDeleteGoal}
+              separators={separators}  // Pass separators to GoalItem for press handling
             />
           )}
           keyExtractor={(item) => item.id}
@@ -76,7 +77,14 @@ const Home = ({ navigation }) => {
               <PressableButton title="Delete All" onPress={handleDeleteAll} isDelete={false} />
             </View>
           )}
-          ItemSeparatorComponent={() => <View style={styles.separator} />}
+          ItemSeparatorComponent={({ highlighted }) => (
+            <View
+              style={[
+                styles.separator,
+                highlighted && { backgroundColor: '#FF6347' },  // Separator color change on highlight
+              ]}
+            />
+          )}
         />
       </View>
 
