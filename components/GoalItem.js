@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, Pressable, Alert, Platform } from 'react-native
 import PressableButton from './PressableButton';  // Import your custom button
 import { useNavigation } from '@react-navigation/native';
 
-const GoalItem = ({ text, id, onDelete }) => {
+const GoalItem = ({ text, id, onDelete, separators }) => {
   const navigation = useNavigation();  // Get navigation object using the hook
 
   // Function to confirm and delete the goal on long press
@@ -29,6 +29,8 @@ const GoalItem = ({ text, id, onDelete }) => {
     <Pressable
       onPress={() => navigation.navigate('GoalDetails', { goal: { text, id } })}
       onLongPress={handleLongPress}  // Trigger deletion confirmation on long press
+      onPressIn={() => separators.highlight()}   // Call highlight on press in
+      onPressOut={() => separators.unhighlight()}  // Call unhighlight on press out
       android_ripple={{ color: '#b0e0e6', borderless: false }}  // Ripple effect for Android
       style={({ pressed }) => {
         // Return an array of styles with specific press feedback for iOS

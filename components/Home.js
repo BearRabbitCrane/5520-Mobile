@@ -56,7 +56,7 @@ const Home = ({ navigation }) => {
             <GoalItem 
               text={item.text} 
               id={item.id} 
-              onDelete={handleDeleteGoal}
+              onDelete={handleDeleteGoal}  
               separators={separators}  // Pass separators to GoalItem for press handling
             />
           )}
@@ -81,7 +81,7 @@ const Home = ({ navigation }) => {
             <View
               style={[
                 styles.separator,
-                highlighted && { backgroundColor: '#FF6347' },  // Separator color change on highlight
+                highlighted && { backgroundColor: '#32CD32' },  // Change color when highlighted
               ]}
             />
           )}
@@ -141,10 +141,10 @@ const styles = StyleSheet.create({
     marginVertical: 20,
   },
   separator: {
-    height: 1,
-    width: "90%",
-    backgroundColor: "#ac00e6",
-    alignSelf: "center",
+    height: 5,  // Increase thickness
+    width: "50%",  // Shorten the length (play with percentage to get desired length)
+    backgroundColor: "#6a0dad",  // Purple color to match the theme
+    alignSelf: "center",  // Center the separator
     marginVertical: 10,
   },
 });
