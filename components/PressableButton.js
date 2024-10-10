@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   pressedButton: {
-    opacity: 0.7,  // Change opacity when pressed
+    backgroundColor: '#ff7961',  // Change background color when pressed
+    opacity: 0.7,  // Also change opacity when pressed
   },
   buttonText: {
     color: '#fff',

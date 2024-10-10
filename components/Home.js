@@ -1,9 +1,10 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, SafeAreaView, FlatList, TouchableOpacity, Alert } from "react-native";
+import { StyleSheet, Text, View, SafeAreaView, FlatList, Alert } from "react-native";
 import Header from "./Header";  // Import the Header component from the same folder
 import { useState } from "react";
 import Input from "./Input";  // Import the Input component
 import GoalItem from "./GoalItem";  // Import the GoalItem component
+import PressableButton from "./PressableButton";  // Import the reusable PressableButton
 
 const Home = ({ navigation }) => {
   const appName = "My app";
@@ -62,18 +63,14 @@ const Home = ({ navigation }) => {
     setIsModalVisible(true);
   };
 
-  // Callback to navigate to GoalDetails screen
-  const handleNavigateToDetails = (goal) => {
-    navigation.navigate('GoalDetails', { goal });  // Pass the entire goal object
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="auto" />
 
       <View style={styles.topSection}>
         <Header name={appName} />
-        <Button title="Add a goal" onPress={showModal} />
+        {/* Replacing Button with PressableButton for "Add a goal" */}
+        <PressableButton title="Add a goal" onPress={showModal} />
       </View>
 
       <View style={styles.bottomSection}>
@@ -106,9 +103,8 @@ const Home = ({ navigation }) => {
           // Conditionally display the footer if goals exist
           ListFooterComponent={() => goals.length > 0 && (
             <View style={styles.footer}>
-              <TouchableOpacity onPress={handleDeleteAll} style={styles.deleteAllButton}>
-                <Text style={styles.deleteAllText}>Delete All</Text>
-              </TouchableOpacity>
+              {/* Replacing TouchableOpacity with PressableButton */}
+              <PressableButton title="Delete All" onPress={handleDeleteAll} />
             </View>
           )}
 
@@ -168,17 +164,6 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     marginVertical: 20,
-  },
-  deleteAllButton: {
-    backgroundColor: "red",
-    paddingVertical: 10,
-    paddingHorizontal: 30,
-    borderRadius: 20,
-  },
-  deleteAllText: {
-    color: "white",
-    fontWeight: "bold",
-    fontSize: 16,
   },
   separator: {
     height: 1,
