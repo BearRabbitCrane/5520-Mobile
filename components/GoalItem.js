@@ -11,7 +11,7 @@ const GoalItem = ({ text, id, onDelete }) => {
       <View style={styles.textContainer}>
         <Text style={styles.inputText}>{text}</Text>
 
-        {/* Container for the buttons */}
+        {/* Container for the delete button */}
         <View style={styles.buttonContainer}>
           {/* Delete button */}
           <Button title="X" onPress={() => onDelete(id)} color="red" />
