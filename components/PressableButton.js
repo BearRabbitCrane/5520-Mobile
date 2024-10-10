@@ -20,14 +20,14 @@ const PressableButton = ({ title, onPress }) => {
 
 const styles = StyleSheet.create({
   button: {
-    backgroundColor: '#f44336',  // Red background
+    backgroundColor: '#4169E1',  // Red background
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 5,
     marginLeft: 10,
   },
   pressedButton: {
-    backgroundColor: '#ff7961',  // Change background color when pressed
+    backgroundColor: '#9932CC',  // Change background color when pressed
     opacity: 0.7,  // Also change opacity when pressed
   },
   buttonText: {
