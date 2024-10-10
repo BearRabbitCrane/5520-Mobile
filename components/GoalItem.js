@@ -15,8 +15,6 @@ const GoalItem = ({ text, id, onDelete }) => {
         <View style={styles.buttonContainer}>
           {/* Delete button */}
           <Button title="X" onPress={() => onDelete(id)} color="red" />
-          {/* Navigate directly to GoalDetails */}
-          <Button title="i" onPress={() => navigation.navigate('GoalDetails', { goal: goalObject })} color="blue" />
         </View>
       </View>
     </Pressable>
