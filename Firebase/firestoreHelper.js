@@ -57,3 +57,14 @@ export async function deleteAllFromDB(collectionName) {
     throw err; // Re-throw the error to be handled by the calling function
   }
 }
+
+export async function updateWarning(id, collectionName, updateData) {
+    try {
+      const docRef = doc(database, collectionName, id);
+      await updateDoc(docRef, updateData);
+      console.log('Document successfully updated with warning field.');
+    } catch (err) {
+      console.error('Error updating document: ', err);
+      throw err;
+    }
+  }
