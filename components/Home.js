@@ -6,21 +6,33 @@ import { useState } from "react";
 import Input from "./Input";  
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
-import { app } from "../Firebase/firebaseSetup";  
+import { database } from "../Firebase/firebaseSetup";  
+import { writeToDB } from "../Firebase/firestoreHelper";  
 
 const Home = ({ navigation }) => {
-  console.log(app);
+  console.log(database);
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleInputData = (data) => {
+  const handleInputData = async (data) => {
     const newGoal = {
       text: data,
-      id: Math.random().toString(),
+      createdAt: new Date().toISOString(), // Add timestamp for Firestore document
     };
-    setGoals((currentGoals) => [...currentGoals, newGoal]);
-    setIsModalVisible(false);
+
+    try {
+      // Call the Firestore helper function to write the goal to Firestore
+      const docId = await writeToDB(newGoal, "goals"); // Add to "goals" collection in Firestore
+      setGoals((currentGoals) => [
+        ...currentGoals,
+        { ...newGoal, id: docId }, // Add Firestore document ID to the new goal
+      ]);
+      setIsModalVisible(false);
+    } catch (err) {
+      console.error("Error adding goal to Firestore: ", err);
+      Alert.alert("Error", "Failed to add the goal.");
+    }
   };
 
   const handleDeleteGoal = (id) => {
