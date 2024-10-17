@@ -2,33 +2,77 @@ import React from 'react';
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, SafeAreaView, FlatList, Alert } from "react-native";
 import Header from "./Header";  
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "./Input";  
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
+import { database } from "../Firebase/firebaseSetup";  
+import { writeToDB, deleteFromDB, deleteAllFromDB } from "../Firebase/firestoreHelper";
+import { collection, onSnapshot } from "firebase/firestore";  
 
 const Home = ({ navigation }) => {
+  console.log(database);
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const handleInputData = (data) => {
+  // Handle adding goal input data to Firestore and updating local state
+  const handleInputData = async (data) => {
     const newGoal = {
       text: data,
-      id: Math.random().toString(),
+      timestamp: new Date(),
     };
-    setGoals((currentGoals) => [...currentGoals, newGoal]);
-    setIsModalVisible(false);
+
+    try {
+      const docId = await writeToDB(newGoal, "goals"); // Write the goal to the Firestore "goals" collection
+      console.log(`New goal added with ID: ${docId}`);
+    } catch (error) {
+      console.error('Failed to add goal:', error);
+    }
+
+    setIsModalVisible(false); // Close the modal after adding the goal
   };
 
-  const handleDeleteGoal = (id) => {
-    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
+  // Listen for changes in the "goals" collection in Firestore and update local state
+  useEffect(() => {
+    //querySnapshot is a list/array of documentSnapshots
+    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
+      const loadedGoals = [];
+      //define an array
+      querySnapshot.forEach((doc) => {
+        // Push document data into the array, including Firestore-generated ID
+        loadedGoals.push({ id: doc.id, ...doc.data() });
+      });
+      setGoals(loadedGoals); // Update the state with the goals from Firestore
+    });
+
+    return () => unsubscribe(); // Clean up the subscription when the component unmounts
+  }, []); //the empty brackets make sure it Run only once on component mount
+
+
+  // Handle goal deletion (Firestore and local state)
+  const handleDeleteGoal = async (id) => {
+    try {
+      await deleteFromDB(id, "goals"); // Delete the goal from Firestore
+      setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id)); // Remove the goal locally
+    } catch (error) {
+      console.error('Failed to delete goal:', error);
+    }
   };
 
-  const handleDeleteAll = () => {
+  // Handle deleting all goals from Firestore
+  const handleDeleteAll = async () => {
     Alert.alert("Delete all goals", "Are you sure you want to delete all goals?", [
       { text: "No", style: "cancel" },
-      { text: "Yes", onPress: () => setGoals([]) },
+      { text: "Yes", onPress: async () => {
+          try {
+            await deleteAllFromDB("goals"); // Delete all goals from Firestore
+            setGoals([]); // Clear the local state
+          } catch (error) {
+            console.error('Failed to delete all goals:', error);
+          }
+        } 
+      },
     ]);
   };
 
