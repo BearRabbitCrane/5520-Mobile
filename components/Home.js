@@ -7,7 +7,7 @@ import Input from "./Input";
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
 import { database } from "../Firebase/firebaseSetup";  
-import { writeToDB } from "../Firebase/firestoreHelper";
+import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot } from "firebase/firestore";  
 
 const Home = ({ navigation }) => {
@@ -50,9 +50,16 @@ const Home = ({ navigation }) => {
   }, []); //the empty brackets make sure it Run only once on component mount
 
 
-  const handleDeleteGoal = (id) => {
-    setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
+  // Handle goal deletion (Firestore and local state)
+  const handleDeleteGoal = async (id) => {
+    try {
+      await deleteFromDB(id, "goals"); // Delete the goal from Firestore
+      setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id)); // Remove the goal locally
+    } catch (error) {
+      console.error('Failed to delete goal:', error);
+    }
   };
+
 
   const handleDeleteAll = () => {
     Alert.alert("Delete all goals", "Are you sure you want to delete all goals?", [
