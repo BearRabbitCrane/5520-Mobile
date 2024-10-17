@@ -2,12 +2,13 @@ import React from 'react';
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, SafeAreaView, FlatList, Alert } from "react-native";
 import Header from "./Header";  
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Input from "./Input";  
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
 import { database } from "../Firebase/firebaseSetup";  
-import { writeToDB } from "../Firebase/firestoreHelper";  
+import { writeToDB } from "../Firebase/firestoreHelper";
+import { collection, onSnapshot } from "firebase/firestore";  
 
 const Home = ({ navigation }) => {
   console.log(database);
@@ -15,25 +16,38 @@ const Home = ({ navigation }) => {
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Handle adding goal input data to Firestore and updating local state
   const handleInputData = async (data) => {
     const newGoal = {
       text: data,
-      createdAt: new Date().toISOString(), // Add timestamp for Firestore document
+      timestamp: new Date(),
     };
 
     try {
-      // Call the Firestore helper function to write the goal to Firestore
-      const docId = await writeToDB(newGoal, "goals"); // Add to "goals" collection in Firestore
-      setGoals((currentGoals) => [
-        ...currentGoals,
-        { ...newGoal, id: docId }, // Add Firestore document ID to the new goal
-      ]);
-      setIsModalVisible(false);
-    } catch (err) {
-      console.error("Error adding goal to Firestore: ", err);
-      Alert.alert("Error", "Failed to add the goal.");
+      const docId = await writeToDB(newGoal, "goals"); // Write the goal to the Firestore "goals" collection
+      console.log(`New goal added with ID: ${docId}`);
+    } catch (error) {
+      console.error('Failed to add goal:', error);
     }
+
+    setIsModalVisible(false); // Close the modal after adding the goal
   };
+
+  // Listen for changes in the "goals" collection in Firestore and update local state
+  useEffect(() => {
+    //querySnapshot is a list/array of documentSnapshots
+    const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
+      const loadedGoals = [];
+      //define an array
+      querySnapshot.forEach((doc) => {
+        loadedGoals.push({ id: doc.id, ...doc.data() });
+      });
+      setGoals(loadedGoals); // Update the state with the goals from Firestore
+    });
+
+    return () => unsubscribe(); // Clean up the subscription when the component unmounts
+  }, []); //the empty brackets make sure it Run only once on component mount
+
 
   const handleDeleteGoal = (id) => {
     setGoals((currentGoals) => currentGoals.filter((goal) => goal.id !== id));
