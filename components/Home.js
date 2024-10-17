@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, SafeAreaView, FlatList, Alert } from "react-native";
 import Header from "./Header";  
-import { useState, useEffect } from "react";
 import Input from "./Input";  
 import GoalItem from "./GoalItem";  
-import PressableButton from "./PressableButton";  // Import PressableButton
+import PressableButton from "./PressableButton";
 import { database } from "../Firebase/firebaseSetup";  
 import { writeToDB, deleteFromDB, deleteAllFromDB } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot } from "firebase/firestore";  
 
 const Home = ({ navigation }) => {
-  console.log(database);
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -35,10 +33,9 @@ const Home = ({ navigation }) => {
 
   // Listen for changes in the "goals" collection in Firestore and update local state
   useEffect(() => {
-    //querySnapshot is a list/array of documentSnapshots
+    // Create a Firestore listener on the "goals" collection
     const unsubscribe = onSnapshot(collection(database, "goals"), (querySnapshot) => {
       const loadedGoals = [];
-      //define an array
       querySnapshot.forEach((doc) => {
         // Push document data into the array, including Firestore-generated ID
         loadedGoals.push({ id: doc.id, ...doc.data() });
@@ -46,11 +43,14 @@ const Home = ({ navigation }) => {
       setGoals(loadedGoals); // Update the state with the goals from Firestore
     });
 
-    return () => unsubscribe(); // Clean up the subscription when the component unmounts
-  }, []); //the empty brackets make sure it Run only once on component mount
+    // Detach the Firestore listener when the component unmounts or when the effect runs again
+    return () => {
+      unsubscribe(); // Clean up the Firestore listener
+      console.log('Firestore listener detached');
+    };
+  }, []); // Empty dependency array ensures this runs only once when the component mounts
 
-
-  // Handle goal deletion (Firestore and local state)
+  // Handle goal deletion from Firestore and local state
   const handleDeleteGoal = async (id) => {
     try {
       await deleteFromDB(id, "goals"); // Delete the goal from Firestore
@@ -60,7 +60,7 @@ const Home = ({ navigation }) => {
     }
   };
 
-  // Handle deleting all goals from Firestore
+  // Handle deleting all goals from Firestore and local state
   const handleDeleteAll = async () => {
     Alert.alert("Delete all goals", "Are you sure you want to delete all goals?", [
       { text: "No", style: "cancel" },
@@ -89,7 +89,7 @@ const Home = ({ navigation }) => {
       <StatusBar style="auto" />
       <View style={styles.topSection}>
         <Header name={appName} />
-        {/* Text button for "Add a goal" */}
+        {/* Button to trigger "Add a goal" modal */}
         <PressableButton title="Add a goal" onPress={showModal} isDelete={false} />
       </View>
 
@@ -117,8 +117,8 @@ const Home = ({ navigation }) => {
           )}
           ListFooterComponent={() => goals.length > 0 && (
             <View style={styles.footer}>
-              {/* Text-based delete all button */}
-              <PressableButton title="Delete All" onPress={handleDeleteAll} isDelete={false} />
+              {/* Delete All button */}
+              <PressableButton title="Delete All" onPress={handleDeleteAll} isDelete={true} />
             </View>
           )}
           ItemSeparatorComponent={({ highlighted }) => (
@@ -132,6 +132,7 @@ const Home = ({ navigation }) => {
         />
       </View>
 
+      {/* Modal for inputting a new goal */}
       <Input
         textInputFocus={true}
         onConfirm={handleInputData}
