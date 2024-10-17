@@ -40,6 +40,7 @@ const Home = ({ navigation }) => {
       const loadedGoals = [];
       //define an array
       querySnapshot.forEach((doc) => {
+        // Push document data into the array, including Firestore-generated ID
         loadedGoals.push({ id: doc.id, ...doc.data() });
       });
       setGoals(loadedGoals); // Update the state with the goals from Firestore
