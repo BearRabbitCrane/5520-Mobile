@@ -1,4 +1,4 @@
-import { collection, addDoc, doc, deleteDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, addDoc } from "firebase/firestore";
 import { database } from "./firebaseSetup"; // Import the Firestore database object from firebaseSetup.js
 
 /**
@@ -31,6 +31,29 @@ export async function deleteFromDB(id, collectionName) {
     console.log('Document deleted with ID: ', id);
   } catch (err) {
     console.error('Error deleting document: ', err);
+    throw err; // Re-throw the error to be handled by the calling function
+  }
+}
+
+/**
+ * Deletes all documents from a Firestore collection.
+ * @param {string} collectionName - The Firestore collection name from which to delete all documents.
+ * @returns {Promise} - A promise that resolves when all documents are successfully deleted.
+ */
+export async function deleteAllFromDB(collectionName) {
+  try {
+    const querySnapshot = await getDocs(collection(database, collectionName)); // Get all documents from the collection
+    const deletePromises = [];
+
+    querySnapshot.forEach((docSnapshot) => {
+      const docRef = doc(database, collectionName, docSnapshot.id);
+      deletePromises.push(deleteDoc(docRef)); // Add each deletion promise to the array
+    });
+
+    await Promise.all(deletePromises); // Wait for all delete operations to complete
+    console.log(`All documents deleted from the ${collectionName} collection.`);
+  } catch (err) {
+    console.error('Error deleting all documents: ', err);
     throw err; // Re-throw the error to be handled by the calling function
   }
 }

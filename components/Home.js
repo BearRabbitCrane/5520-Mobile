@@ -7,7 +7,7 @@ import Input from "./Input";
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
 import { database } from "../Firebase/firebaseSetup";  
-import { writeToDB, deleteFromDB } from "../Firebase/firestoreHelper";
+import { writeToDB, deleteFromDB, deleteAllFromDB } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot } from "firebase/firestore";  
 
 const Home = ({ navigation }) => {
@@ -60,11 +60,19 @@ const Home = ({ navigation }) => {
     }
   };
 
-
-  const handleDeleteAll = () => {
+  // Handle deleting all goals from Firestore
+  const handleDeleteAll = async () => {
     Alert.alert("Delete all goals", "Are you sure you want to delete all goals?", [
       { text: "No", style: "cancel" },
-      { text: "Yes", onPress: () => setGoals([]) },
+      { text: "Yes", onPress: async () => {
+          try {
+            await deleteAllFromDB("goals"); // Delete all goals from Firestore
+            setGoals([]); // Clear the local state
+          } catch (error) {
+            console.error('Failed to delete all goals:', error);
+          }
+        } 
+      },
     ]);
   };
 
