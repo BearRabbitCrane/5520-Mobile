@@ -6,8 +6,10 @@ import { useState } from "react";
 import Input from "./Input";  
 import GoalItem from "./GoalItem";  
 import PressableButton from "./PressableButton";  // Import PressableButton
+import { app } from "../Firebase/firebaseSetup";  
 
 const Home = ({ navigation }) => {
+  console.log(app);
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
