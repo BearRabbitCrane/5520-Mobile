@@ -1,4 +1,4 @@
-import { collection, getDocs, deleteDoc, doc, addDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc } from "firebase/firestore";
 import { database } from "./firebaseSetup"; // Import the Firestore database object from firebaseSetup.js
 
 /**
@@ -58,13 +58,13 @@ export async function deleteAllFromDB(collectionName) {
   }
 }
 
-export async function updateWarning(id, collectionName, updateData) {
+export async function updateWarningInDB(id, collectionName) {
     try {
-      const docRef = doc(database, collectionName, id);
-      await updateDoc(docRef, updateData);
-      console.log('Document successfully updated with warning field.');
+      const docRef = doc(database, collectionName, id); // Reference to the document
+      await updateDoc(docRef, { warning: true }); // Update the "warning" field to true
+      console.log(`Warning field updated for document ID: ${id}`);
     } catch (err) {
-      console.error('Error updating document: ', err);
+      console.error("Error updating warning field: ", err);
       throw err;
     }
   }
