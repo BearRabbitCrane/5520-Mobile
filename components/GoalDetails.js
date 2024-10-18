@@ -2,16 +2,25 @@ import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PressableButton from './PressableButton';  // Reusable PressableButton component
+import { updateWarningInDB } from '../Firebase/firestoreHelper';  // Import the Firestore update function
 
 const GoalDetails = ({ route, navigation }) => {
   // Extract the goal object passed via navigation
   const { goal } = route.params;
   const [textColor, setTextColor] = useState("black");  // State to control text color
 
-  // Function to change text color and update header title
-  const handleWarningPress = () => {
+  // Function to change text color, update header title, and update Firestore
+  const handleWarningPress = async () => {
     setTextColor("red");  // Change text color to red
     navigation.setOptions({ title: "Warning!" });  // Update header title
+
+    // Update the warning field in Firestore
+    try {
+      await updateWarningInDB(goal.id, "goals");  // Assume 'goals' is the collection name
+      console.log('Warning field updated for goal:', goal.id);
+    } catch (error) {
+      console.error('Failed to update warning field:', error);
+    }
   };
 
   // Define the button in the header using useLayoutEffect
@@ -26,7 +35,7 @@ const GoalDetails = ({ route, navigation }) => {
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, handleWarningPress]);
 
   return (
     <View style={styles.container}>
