@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PressableButton from './PressableButton';  // Reusable PressableButton component
+import GoalUsers from './GoalUsers';  // Import GoalUsers component
 import { updateWarningInDB } from '../Firebase/firestoreHelper';  // Import the Firestore update function
 
 const GoalDetails = ({ route, navigation }) => {
@@ -35,7 +36,7 @@ const GoalDetails = ({ route, navigation }) => {
         />
       ),
     });
-  }, [navigation, handleWarningPress]);
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
@@ -51,6 +52,9 @@ const GoalDetails = ({ route, navigation }) => {
         }}
         isDelete={false}  // This is a normal button
       />
+
+      {/* Render the GoalUsers component */}
+      <GoalUsers />
     </View>
   );
 };
