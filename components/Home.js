@@ -15,21 +15,34 @@ const Home = ({ navigation }) => {
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   // Handle adding goal input data to Firestore and updating local state
-  const handleInputData = async (data) => {
-    const newGoal = {
-      text: data,
-      timestamp: new Date(),
-    };
-
-    try {
-      const docId = await writeToDB(newGoal, "goals"); // Write the goal to the Firestore "goals" collection
-      console.log(`New goal added with ID: ${docId}`);
-    } catch (error) {
-      console.error('Failed to add goal:', error);
-    }
-
-    setIsModalVisible(false); // Close the modal after adding the goal
+  // Inside the component that handles goal submission
+const handleInputData = async (data) => {
+  const newGoal = {
+    text: data,
+    timestamp: new Date(),
   };
+
+  try {
+    // Add the goal to Firestore and get the goal ID
+    const goalId = await writeToDB(newGoal, "goals"); 
+    console.log(`New goal added with ID: ${goalId}`);
+
+    // Fetch users from API and add them to the sub-collection for this goal
+    const usersArray = [
+      { id: "1", name: "User 1", email: "user1@example.com", phone: "123456789" },
+      { id: "2", name: "User 2", email: "user2@example.com", phone: "987654321" }
+    ];
+
+    await writeUsersToSubcollection(goalId, usersArray);  // Add users to the sub-collection for this goal
+    console.log('Users added to the subcollection successfully.');
+
+  } catch (error) {
+    console.error('Failed to add goal and users:', error);
+  }
+
+  setIsModalVisible(false); // Close the modal after adding the goal
+};
+
 
   // Listen for changes in the "goals" collection in Firestore and update local state
   useEffect(() => {

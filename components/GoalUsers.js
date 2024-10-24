@@ -1,80 +1,79 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, Text, StyleSheet } from 'react-native';
-import { writeUsersToSubcollection } from '../Firebase/firestoreHelper'; // Assuming this helper exists
-import { collection, getDocs } from 'firebase/firestore'; // For checking existing data in Firestore
-import { database } from '../Firebase/firebaseSetup'; // Firestore instance setup
+import { View, Text, FlatList, Button, StyleSheet, Alert } from 'react-native';
 
-const GoalUsers = ({ goalId }) => {
-  const [users, setUsers] = useState([]); // State for user data
-  const [isLoading, setIsLoading] = useState(true);
+const GoalUsers = () => {
+  const [users, setUsers] = useState([]);
 
+  // Fetch users data (this function will run once after the component mounts)
   useEffect(() => {
     const fetchUsers = async () => {
-      const usersCollectionRef = collection(database, "goals", goalId, "users");
-
       try {
-        const querySnapshot = await getDocs(usersCollectionRef);
-
-        if (querySnapshot.empty) {
-          console.log("No users found in Firestore, fetching from API...");
-          
-          // Fetching users from API if not found in Firestore
-          const response = await fetch('https://jsonplaceholder.typicode.com/users');
-          const fetchedUsers = await response.json();
-
-          // Using forEach to add each user to Firestore
-          fetchedUsers.forEach(async (user) => {
-            await writeUsersToSubcollection(goalId, [user]); // Writes each user into Firestore
-          });
-
-          setUsers(fetchedUsers); // Set the users fetched from the API
-        } else {
-          // If users already exist in Firestore, load them
-          const loadedUsers = [];
-          querySnapshot.forEach((doc) => {
-            loadedUsers.push({ id: doc.id, ...doc.data() });
-          });
-          setUsers(loadedUsers); // Set the users from Firestore
-        }
-
-        setIsLoading(false);
+        const response = await fetch('https://jsonplaceholder.typicode.com/users');
+        const data = await response.json();
+        setUsers(data); // Set the fetched users
       } catch (error) {
-        console.error('Error fetching users:', error);
-        setIsLoading(false);
+        console.error('Failed to fetch users:', error);
       }
     };
+    fetchUsers();
+  }, []);
 
-    fetchUsers(); // Fetch users once the component is mounted
-  }, [goalId]);
+  // Function to handle sending the POST request
+  const handlePostUser = async () => {
+    const fakeUser = {
+      name: 'John Doe',
+      email: 'john.doe@example.com',  // Example data to send
+    };
 
-  if (isLoading) {
-    return <Text>Loading users...</Text>; // Loader while fetching users
-  }
+    try {
+      const response = await fetch('https://example.com/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(fakeUser), // Convert JS object to JSON string
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'User sent successfully!');
+        const responseData = await response.json();
+        console.log('Response from server:', responseData);
+      } else {
+        Alert.alert('Error', 'Failed to send user data.');
+      }
+    } catch (error) {
+      console.error('Error sending user:', error);
+      Alert.alert('Error', 'Failed to send user.');
+    }
+  };
 
   return (
-    <View>
+    <View style={styles.container}>
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.userItem}>
-            <Text style={styles.userName}>{item.name}</Text>
+            <Text>{item.name}</Text>
           </View>
         )}
       />
+      {/* Add a button to trigger the POST request */}
+      <Button title="Send User Data" onPress={handlePostUser} />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
   userItem: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-  },
-  userName: {
-    fontSize: 16,
-    fontWeight: 'bold',
+    backgroundColor: '#f8f8f8',
+    marginBottom: 10,
+    borderRadius: 5,
   },
 });
 

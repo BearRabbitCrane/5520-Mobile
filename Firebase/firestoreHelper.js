@@ -11,7 +11,7 @@ export async function writeToDB(data, collectionName) {
   try {
     const docRef = await addDoc(collection(database, collectionName), data);
     console.log('Document written with ID: ', docRef.id);
-    return docRef.id; // Return the document ID if needed
+    return docRef.id; // Return the document ID after the goal is added
   } catch (err) {
     console.error('Error adding document: ', err);
     throw err; // Re-throw the error to be handled by the calling function
@@ -69,41 +69,44 @@ export async function updateWarningInDB(id, collectionName) {
     }
   }
 
-// Fetch users from the sub-collection in Firestore
-export async function getUsersFromSubcollection(goalId) {
-  try {
-    const usersCollectionRef = collection(database, "goals", goalId, "users");
-    const querySnapshot = await getDocs(usersCollectionRef); // Fetch the documents
-
-    const users = [];
-    querySnapshot.forEach((doc) => {
-      users.push({ id: doc.id, ...doc.data() }); // Add each user to the array
-    });
-
-    console.log('Fetched users from Firestore:', users);
-    return users; // Return the array of users
-  } catch (error) {
-    console.error('Error getting users from sub-collection:', error);
-    return [];
-  }
+/**
+ * Fetches users from the users subcollection.
+ * @param {string} goalId - The ID of the goal.
+ * @returns {Promise<Array>} - A promise that resolves to an array of user objects.
+ */
+async function getUsersFromSubcollection(goalId) {
+  const usersCollectionRef = collection(database, "goals", goalId, "users");
+  const querySnapshot = await getDocs(usersCollectionRef);
+  const usersArray = [];
+  querySnapshot.forEach((doc) => {
+    usersArray.push(doc.data());
+  });
+  return usersArray;
 }
 
-// Write users to the sub-collection in Firestore
+/**
+ * Write users to the sub-collection of a specific goal in Firestore.
+ * @param {string} goalId - The ID of the goal where users will be added.
+ * @param {Array} usersArray - An array of user objects to write to Firestore.
+ */
 export async function writeUsersToSubcollection(goalId, usersArray) {
   try {
     const usersCollectionRef = collection(database, "goals", goalId, "users");
 
+    // Loop through the array of users and write each user to the "users" subcollection
     for (const user of usersArray) {
       const userToSave = {
-        id: user.id,
+        id: user.id,  // Unique ID for the user, either from the API or generated
         name: user.name,
         email: user.email,
         phone: user.phone,
+        company: user.company ? user.company.name : '',  // Optional: Add more fields as needed
+        city: user.address ? user.address.city : '',  // Optional: User's city for additional context
       };
 
-      await addDoc(usersCollectionRef, userToSave); // Add each user to Firestore
+      await addDoc(usersCollectionRef, userToSave);  // Add each user document to Firestore
+      console.log(`User ${user.name} added to sub-collection successfully.`);
     }
-    console.log('Users added to sub-collection successfully.');
   } catch (error) {
     console.error('Error adding users to sub-collection:', error);
   }
