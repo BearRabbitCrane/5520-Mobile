@@ -1,42 +1,64 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
+import { View, FlatList, Text, StyleSheet } from 'react-native';
+import { writeUsersToSubcollection } from '../Firebase/firestoreHelper'; // Assuming this helper exists
+import { collection, getDocs } from 'firebase/firestore'; // For checking existing data in Firestore
+import { database } from '../Firebase/firebaseSetup'; // Firestore instance setup
 
-const GoalUsers = () => {
-  const [users, setUsers] = useState([]); // Initialize users state as an empty array
-  const [loading, setLoading] = useState(true); // Loading state
+const GoalUsers = ({ goalId }) => {
+  const [users, setUsers] = useState([]); // State for user data
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Fetch user data from a fake API
   useEffect(() => {
     const fetchUsers = async () => {
+      const usersCollectionRef = collection(database, "goals", goalId, "users");
+
       try {
-        const response = await fetch('https://jsonplaceholder.typicode.com/users');
-        const data = await response.json(); // Parse the response into JSON
-        setUsers(data); // Set the users state with the data received from the API
-        setLoading(false); // Stop loading once data is fetched
+        const querySnapshot = await getDocs(usersCollectionRef);
+
+        if (querySnapshot.empty) {
+          console.log("No users found in Firestore, fetching from API...");
+          
+          // Fetching users from API if not found in Firestore
+          const response = await fetch('https://jsonplaceholder.typicode.com/users');
+          const fetchedUsers = await response.json();
+
+          // Using forEach to add each user to Firestore
+          fetchedUsers.forEach(async (user) => {
+            await writeUsersToSubcollection(goalId, [user]); // Writes each user into Firestore
+          });
+
+          setUsers(fetchedUsers); // Set the users fetched from the API
+        } else {
+          // If users already exist in Firestore, load them
+          const loadedUsers = [];
+          querySnapshot.forEach((doc) => {
+            loadedUsers.push({ id: doc.id, ...doc.data() });
+          });
+          setUsers(loadedUsers); // Set the users from Firestore
+        }
+
+        setIsLoading(false);
       } catch (error) {
-        console.error('Failed to fetch users:', error);
-        setLoading(false);
+        console.error('Error fetching users:', error);
+        setIsLoading(false);
       }
     };
 
-    fetchUsers(); // Call the async function inside useEffect
-  }, []);
+    fetchUsers(); // Fetch users once the component is mounted
+  }, [goalId]);
 
-  if (loading) {
-    return <ActivityIndicator size="large" color="#0000ff" />; // Show loader while fetching data
+  if (isLoading) {
+    return <Text>Loading users...</Text>; // Loader while fetching users
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Goal Users</Text>
-      {/* Render a FlatList of user names */}
+    <View>
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.userItem}>
-            {/* Render user name */}
-            <Text style={styles.userName}>{item.name}</Text> 
+            <Text style={styles.userName}>{item.name}</Text>
           </View>
         )}
       />
@@ -45,21 +67,10 @@ const GoalUsers = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 20,
-    paddingHorizontal: 20,
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    textAlign: 'center',
-  },
   userItem: {
-    backgroundColor: '#f0f0f0',
-    padding: 15,
-    marginVertical: 5,
-    borderRadius: 8,
+    padding: 10,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ddd',
   },
   userName: {
     fontSize: 16,

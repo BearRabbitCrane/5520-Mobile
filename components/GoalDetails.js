@@ -36,12 +36,16 @@ const GoalDetails = ({ route, navigation }) => {
         />
       ),
     });
-  }, [navigation]);
+  }, [navigation, handleWarningPress]);
 
   return (
     <View style={styles.container}>
       <Text style={[styles.detailText, { color: textColor }]}>ID: {goal.id}</Text>
       <Text style={[styles.detailText, { color: textColor }]}>Text: {goal.text}</Text>
+
+      {/* Pass goalId to GoalUsers component */}
+      {/* Pass the goalId as a prop */}
+      <GoalUsers goalId={goal.id} /> 
 
       {/* Button to push another instance of GoalDetails on the stack */}
       <PressableButton
@@ -52,9 +56,6 @@ const GoalDetails = ({ route, navigation }) => {
         }}
         isDelete={false}  // This is a normal button
       />
-
-      {/* Render the GoalUsers component */}
-      <GoalUsers />
     </View>
   );
 };

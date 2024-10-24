@@ -68,3 +68,43 @@ export async function updateWarningInDB(id, collectionName) {
       throw err;
     }
   }
+
+// Fetch users from the sub-collection in Firestore
+export async function getUsersFromSubcollection(goalId) {
+  try {
+    const usersCollectionRef = collection(database, "goals", goalId, "users");
+    const querySnapshot = await getDocs(usersCollectionRef); // Fetch the documents
+
+    const users = [];
+    querySnapshot.forEach((doc) => {
+      users.push({ id: doc.id, ...doc.data() }); // Add each user to the array
+    });
+
+    console.log('Fetched users from Firestore:', users);
+    return users; // Return the array of users
+  } catch (error) {
+    console.error('Error getting users from sub-collection:', error);
+    return [];
+  }
+}
+
+// Write users to the sub-collection in Firestore
+export async function writeUsersToSubcollection(goalId, usersArray) {
+  try {
+    const usersCollectionRef = collection(database, "goals", goalId, "users");
+
+    for (const user of usersArray) {
+      const userToSave = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+      };
+
+      await addDoc(usersCollectionRef, userToSave); // Add each user to Firestore
+    }
+    console.log('Users added to sub-collection successfully.');
+  } catch (error) {
+    console.error('Error adding users to sub-collection:', error);
+  }
+}
