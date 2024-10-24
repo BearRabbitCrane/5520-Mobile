@@ -1,43 +1,42 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator, FlatList } from 'react-native';
 
 const GoalUsers = () => {
-  const [users, setUsers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState([]); // Initialize users state as an empty array
+  const [loading, setLoading] = useState(true); // Loading state
 
+  // Fetch user data from a fake API
   useEffect(() => {
-    // Define an async function to fetch user data
     const fetchUsers = async () => {
       try {
         const response = await fetch('https://jsonplaceholder.typicode.com/users');
-        const data = await response.json();
-        setUsers(data); // Update the state with fetched user data
+        const data = await response.json(); // Parse the response into JSON
+        setUsers(data); // Set the users state with the data received from the API
+        setLoading(false); // Stop loading once data is fetched
       } catch (error) {
-        console.error('Error fetching users:', error);
-      } finally {
-        setLoading(false); // Set loading to false after the data is fetched
+        console.error('Failed to fetch users:', error);
+        setLoading(false);
       }
     };
 
-    // Call the async function inside useEffect
-    fetchUsers();
-  }, []); // Empty dependency array ensures this effect runs only once on mount
+    fetchUsers(); // Call the async function inside useEffect
+  }, []);
 
   if (loading) {
-    return <Text>Loading users...</Text>;
+    return <ActivityIndicator size="large" color="#0000ff" />; // Show loader while fetching data
   }
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Goal Users</Text>
-      {/* Render the list of users */}
+      {/* Render a FlatList of user names */}
       <FlatList
         data={users}
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => (
           <View style={styles.userItem}>
-            <Text style={styles.userName}>{item.name}</Text>
-            <Text style={styles.userEmail}>{item.email}</Text>
+            {/* Render user name */}
+            <Text style={styles.userName}>{item.name}</Text> 
           </View>
         )}
       />
@@ -47,26 +46,24 @@ const GoalUsers = () => {
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 20,
+    marginTop: 20,
     paddingHorizontal: 20,
   },
   title: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    textAlign: 'center',
   },
   userItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    backgroundColor: '#f0f0f0',
+    padding: 15,
+    marginVertical: 5,
+    borderRadius: 8,
   },
   userName: {
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  userEmail: {
-    fontSize: 14,
-    color: 'gray',
   },
 });
 
