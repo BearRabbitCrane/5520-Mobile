@@ -2,6 +2,7 @@ import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import PressableButton from './PressableButton';  // Reusable PressableButton component
+import GoalUsers from './GoalUsers';  // Import GoalUsers component
 import { updateWarningInDB } from '../Firebase/firestoreHelper';  // Import the Firestore update function
 
 const GoalDetails = ({ route, navigation }) => {
@@ -41,6 +42,10 @@ const GoalDetails = ({ route, navigation }) => {
     <View style={styles.container}>
       <Text style={[styles.detailText, { color: textColor }]}>ID: {goal.id}</Text>
       <Text style={[styles.detailText, { color: textColor }]}>Text: {goal.text}</Text>
+
+      {/* Pass goalId to GoalUsers component */}
+      {/* Pass the goalId as a prop */}
+      <GoalUsers goalId={goal.id} /> 
 
       {/* Button to push another instance of GoalDetails on the stack */}
       <PressableButton
