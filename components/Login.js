@@ -9,6 +9,11 @@ const Login = ({ navigation }) => {
 
   const handleLogin = async () => {
     try {
+      if(email.length===0 || password.length===0){
+        Alert.alert('No field shoukd be empty');
+      return;
+    }
+
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
       console.log('User logged in:', user);
