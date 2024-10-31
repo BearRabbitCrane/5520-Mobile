@@ -3,18 +3,24 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Home from './components/Home';
 import GoalDetails from './components/GoalDetails';
+import Signup from './components/Signup';
+import Login from './components/Login';
 
 const Stack = createNativeStackNavigator();
 
 const App = () => {
   return (
     <NavigationContainer>
+      
       <Stack.Navigator
+      
         screenOptions={{
           headerStyle: { backgroundColor: '#4a148c' },  // Global header background color
           headerTintColor: '#fff',  // Global header text color
         }}
       >
+         <Stack.Screen name="Signup" component={Signup} options={{ title: 'Signup' }} />
+         <Stack.Screen name="Login" component={Login} options={{ title: 'Login' }} />
         {/* Home screen with unique title */}
         <Stack.Screen 
           name="Home"
@@ -33,6 +39,7 @@ const App = () => {
             };
           }}
         />
+        
       </Stack.Navigator>
     </NavigationContainer>
   );
