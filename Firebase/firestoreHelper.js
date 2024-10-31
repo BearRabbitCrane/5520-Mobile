@@ -1,5 +1,6 @@
 import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc } from "firebase/firestore";
 import { database } from "./firebaseSetup"; // Import the Firestore database object from firebaseSetup.js
+import { auth } from "../Firebase/firebaseSetup";
 
 /**
  * Writes a new document to Firestore in the specified collection.
@@ -9,7 +10,8 @@ import { database } from "./firebaseSetup"; // Import the Firestore database obj
  */
 export async function writeToDB(data, collectionName) {
   try {
-    const docRef = await addDoc(collection(database, collectionName), data);
+    const goalWithOwner = { ...data, owner: auth.currentUser.uid };
+    const docRef = await addDoc(collection(database, collectionName), goalWithOwner);
     console.log('Document written with ID: ', docRef.id);
     return docRef.id; // Return the document ID after the goal is added
   } catch (err) {
