@@ -7,6 +7,8 @@ import Home from './components/Home';
 import GoalDetails from './components/GoalDetails';
 import Signup from './components/Signup';
 import Login from './components/Login';
+import Profile from './components/Profile'; 
+import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
 
@@ -42,7 +44,18 @@ const App = () => {
             <Stack.Screen 
               name="Home"
               component={Home}
-              options={{ title: 'All My Goals' }}
+              options={({ navigation }) => ({
+                title: 'All My Goals',
+                headerRight: () => (
+                  <Ionicons
+                    name="person-circle"
+                    size={24}
+                    color="white"
+                    style={{ marginRight: 10 }}
+                    onPress={() => navigation.navigate('Profile')}
+                  />
+                ),
+              })}
             />
             <Stack.Screen
               name="GoalDetails"
@@ -53,6 +66,11 @@ const App = () => {
                   title: isMoreDetails ? 'More Details' : route.params.goal.text,
                 };
               }}
+            />
+            <Stack.Screen
+              name="Profile"
+              component={Profile}
+              options={{ title: 'Profile' }}
             />
           </>
         ) : (
