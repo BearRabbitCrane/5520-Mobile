@@ -24,9 +24,10 @@ const Signup = ({ navigation }) => {
       console.log('User registered:', user);
       Alert.alert('Success', 'User registered successfully');
       // Navigate to login screen after successful registration
-      navigation.navigate('Login');
+      //navigation.navigate('Login');
     } catch (error) {
       console.error('Error registering user:', error);
+      //if(error.code==="auth")
       Alert.alert('Registration Error', error.message);
     }
   };
