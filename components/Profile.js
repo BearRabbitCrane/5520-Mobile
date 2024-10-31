@@ -1,10 +1,39 @@
 // Profile.js
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { auth } from '../Firebase/firebaseSetup'; // Import the auth instance
+import React, { useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, Alert } from 'react-native';
+import { auth } from '../Firebase/firebaseSetup'; // Import your Firebase auth instance
+import { signOut } from 'firebase/auth';
+import { Ionicons } from '@expo/vector-icons';
 
-const Profile = () => {
+const Profile = ({ navigation }) => {
   const user = auth.currentUser;
+
+  // Sign-out function
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      Alert.alert('Signed Out', 'You have been signed out.');
+      navigation.replace('Login'); // Redirect to Login screen after signing out
+    } catch (error) {
+      console.error('Error signing out:', error);
+      Alert.alert('Error', 'Failed to sign out.');
+    }
+  };
+
+  // Set up the sign-out icon in the header
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Ionicons
+          name="log-out-outline"
+          size={24}
+          color="white"
+          style={{ marginRight: 10 }}
+          onPress={handleSignOut}
+        />
+      ),
+    });
+  }, [navigation]);
 
   return (
     <View style={styles.container}>
