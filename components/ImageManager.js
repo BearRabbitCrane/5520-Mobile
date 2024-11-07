@@ -39,6 +39,7 @@ const ImageManager = () => {
       if (!result.canceled) {
         const uri = result.assets[0].uri; // Get the URI of the captured image
         setImageUri(uri); // Store the URI in the state
+        onImageTaken(uri); // Call the callback to pass the URI to Input.js
       } else {
         console.log('User canceled image selection');
       }
@@ -52,7 +53,13 @@ const ImageManager = () => {
     <View style={styles.container}>
     <Button title="Take Image" onPress={takeImageHandler} />
     {/* Display the image preview if an image has been captured */}
-    {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+    {imageUri && (
+        <Image
+          source={{ uri: imageUri }}
+          style={styles.previewImage}
+          accessibilityLabel="Captured image preview"
+        />
+      )}
   </View>
   );
 };
@@ -62,7 +69,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     alignItems: 'center',
   },
-  image: {
+  previewImage: {
     width: 200,
     height: 200,
     marginTop: 10,
