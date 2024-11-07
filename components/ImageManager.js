@@ -5,15 +5,30 @@ import * as ImagePicker from 'expo-image-picker';
 const ImageManager = () => {
   const [response, requestPermission] = ImagePicker.useCameraPermissions();
   console.log(response);
-  const takeImageHandler = async () => {
-    // Check if permission is granted
-    if (!response.granted) {
-        const permissionResult = await requestPermission();
-        if (!permissionResult.granted) {
-          Alert.alert('Permission required', 'You need to grant camera access to take photos.');
-          return;
+
+  // Function to verify permission
+  const verifyPermission = async () => {
+    try {
+        if (response.granted) {
+          return true; // Permission already granted
         }
+    
+        const permissionResult = await requestPermission(); // Request permission if not granted
+    
+        return permissionResult.granted; // Return true if granted, false otherwise
+      } catch (error) {
+        console.error('Permission request failed:', error); // Log error if there's an issue with requesting permission
+        return false; // Return false in case of error
       }
+  };
+
+  const takeImageHandler = async () => {
+    const hasPermission = await verifyPermission();
+
+    if (!hasPermission) {
+        Alert.alert('Permission required', 'You need to grant camera access to take photos.');
+      return;
+    } 
     try {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true, // Allow user to edit the image
