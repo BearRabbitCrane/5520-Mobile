@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TextInput, View, Button, Modal, Alert, Image } from "react-native";
 import React, { useState } from "react";
+import ImageManager from "./ImageManager";
 
 export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisible }) {
   const [text, setText] = useState("");
@@ -54,6 +55,9 @@ export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisi
             style={styles.image}
             alt="Local Target"
           />
+
+          {/* Render the ImageManager component */}
+          <ImageManager />
 
           <TextInput
             autoFocus={textInputFocus}
