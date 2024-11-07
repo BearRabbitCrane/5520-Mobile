@@ -3,7 +3,17 @@ import { View, Button, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 
 const ImageManager = () => {
+  const [response, requestPermission] = ImagePicker.useCameraPermissions();
+  console.log(response);
   const takeImageHandler = async () => {
+    // Check if permission is granted
+    if (!response.granted) {
+        const permissionResult = await requestPermission();
+        if (!permissionResult.granted) {
+          Alert.alert('Permission required', 'You need to grant camera access to take photos.');
+          return;
+        }
+      }
     try {
       const result = await ImagePicker.launchCameraAsync({
         allowsEditing: true, // Allow user to edit the image
