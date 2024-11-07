@@ -4,6 +4,7 @@ import * as ImagePicker from 'expo-image-picker';
 
 const ImageManager = () => {
   const [response, requestPermission] = ImagePicker.useCameraPermissions();
+  const [imageUri, setImageUri] = useState(null); // State to store the URI of the captured image
   console.log(response);
 
   // Function to verify permission
@@ -36,7 +37,8 @@ const ImageManager = () => {
       });
 
       if (!result.canceled) {
-        console.log(result.assets[0].uri); // Log the URI of the captured image
+        const uri = result.assets[0].uri; // Get the URI of the captured image
+        setImageUri(uri); // Store the URI in the state
       } else {
         console.log('User canceled image selection');
       }
@@ -48,14 +50,23 @@ const ImageManager = () => {
 
   return (
     <View style={styles.container}>
-      <Button title="Take Image" onPress={takeImageHandler} />
-    </View>
+    <Button title="Take Image" onPress={takeImageHandler} />
+    {/* Display the image preview if an image has been captured */}
+    {imageUri && <Image source={{ uri: imageUri }} style={styles.image} />}
+  </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     marginVertical: 10,
+    alignItems: 'center',
+  },
+  image: {
+    width: 200,
+    height: 200,
+    marginTop: 10,
+    borderRadius: 10,
   },
 });
 
