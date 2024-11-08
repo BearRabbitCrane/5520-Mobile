@@ -1,18 +1,26 @@
 import { StyleSheet, Text, TextInput, View, Button, Modal, Alert, Image } from "react-native";
 import React, { useState } from "react";
+import ImageManager from "./ImageManager";
 
 export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisible }) {
   const [text, setText] = useState("");
   const [isConfirmDisabled, setIsConfirmDisabled] = useState(true); // Confirm button disabled by default
+  const [imageUri, setImageUri] = useState(null); // State to store the image URI
 
   function updateText(changedText) {
     setText(changedText);
     setIsConfirmDisabled(changedText.length < 3);  // Enable Confirm if input has at least 3 characters
   }
 
+  // Callback to receive the image URI from ImageManager
+  const handleImageTaken = (uri) => {
+    setImageUri(uri); // Store the URI in the state
+  };
+
   const handleConfirm = () => {
     onConfirm(text);
     setText("");  // Clear TextInput after confirming
+    setImageUri(null); // Clear the image URI after confirming
   };
 
   const handleCancel = () => {
@@ -26,6 +34,7 @@ export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisi
           onPress: () => {
             onCancel();
             setText("");  // Clear TextInput after canceling
+            setImageUri(null); // Clear the image URI after canceling
           },
         },
       ]
@@ -36,6 +45,18 @@ export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisi
     <Modal animationType="slide" visible={isModalVisible} transparent={true}>
       <View style={styles.modalContainer}>
         <View style={styles.innerContainer}>
+
+          {/* Render the ImageManager component and pass handleImageTaken as a prop */}
+          <ImageManager onImageTaken={handleImageTaken} />
+
+          {imageUri && (
+            <Image
+              source={{ uri: imageUri }}
+              style={styles.image}
+              accessibilityLabel="Selected image preview"
+            />
+          )}
+
           {/* 
             Network image loaded from a URL. 
             The alt prop provides a description of the image for accessibility purposes.

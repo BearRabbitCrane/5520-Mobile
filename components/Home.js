@@ -8,18 +8,42 @@ import PressableButton from "./PressableButton";
 import { auth, database } from "../Firebase/firebaseSetup";  
 import { writeToDB, deleteFromDB, deleteAllFromDB, writeUsersToSubcollection } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot, query, where } from "firebase/firestore";  
+import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
 const Home = ({ navigation }) => {
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  const handleImageData = async (uri) => {
+    try{
+      const response = await fetch(uri);
+      if (!response.ok) {
+        throw new Error('fetch error happened with status ${response.status}');
+      }
+      const blob = await response.blob();
+      const imageName = uri.substring(uri.lastIndexOf('/') + 1);
+      const imageRef = await ref(storage, `images/${imageName}`)
+      const uploadResult = await uploadBytesResumable(imageRef, blob);
+    } catch (error) {
+      console.error('Failed to fetch image data:', error);
+    }
+  };
+
   // Handle adding goal input data to Firestore and updating local state
   const handleInputData = async (data) => {
+    let imageUrl = null;
+
+    // If there's an image URI, upload the image and get the path
+    if (data.imageUri) {
+      imageUrl = await handleImageData(data.imageUri);
+    }
+
     const newGoal = {
       text: data,
       timestamp: new Date(),
-      owner: auth.currentUser.uid // Add owner's UID
+      owner: auth.currentUser.uid, // Add owner's UID
+      imageUrl: imageUri, // Add image URL if available
     };
 
     try {
