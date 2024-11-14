@@ -4,6 +4,7 @@ import { View, Text, StyleSheet, Alert } from 'react-native';
 import { auth } from '../Firebase/firebaseSetup'; // Import your Firebase auth instance
 import { signOut } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
+import LocationManager from './LocationManager';
 
 const Profile = ({ navigation }) => {
   const user = auth.currentUser;
@@ -45,6 +46,8 @@ const Profile = ({ navigation }) => {
       ) : (
         <Text style={styles.info}>No user is logged in</Text>
       )}
+      {/* Render the LocationManager component */}
+      <LocationManager />
     </View>
   );
 };
