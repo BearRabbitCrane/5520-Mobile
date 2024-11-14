@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { View, Button, StyleSheet, Alert, Image } from 'react-native';
 import * as Location from 'expo-location';
+import { useNavigation } from '@react-navigation/native';
 
 const LocationManager = () => {
+  const navigation = useNavigation(); // Hook to get navigation prop
   const [location, setLocation] = useState(null); // State for storing latitude and longitude
   const [response, requestPermission] = Location.useForegroundPermissions();
 
@@ -44,14 +46,25 @@ const LocationManager = () => {
   const mapImageUrl = location
     ? `https://maps.googleapis.com/maps/api/staticmap?center=${location.latitude},${location.longitude}&zoom=14&size=400x200&maptype=roadmap&markers=color:red%7Clabel:L%7C${location.latitude},${location.longitude}&key=${process.env.EXPO_PUBLIC_GOOGLE_MAPS_API_KEY}`
     : null;
-  console.log(mapImageUrl);
+  
   return (
     <View style={styles.container}>
-      <Button title="Locate User" onPress={locateUserHandler} />
+      <Button title="Locate Me" onPress={locateUserHandler} />
       {location && (
         <Image
           source={{ uri: mapImageUrl }}
           style={styles.mapImage}
+        />
+      )}
+      {location && (
+        <Button
+          title="Show on Map"
+          onPress={() => {
+            navigation.navigate('Map', {
+              latitude: location.latitude,
+              longitude: location.longitude,
+            });
+          }}
         />
       )}
     </View>
