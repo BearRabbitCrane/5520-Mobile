@@ -3,17 +3,33 @@ import { View, Button, StyleSheet, Alert } from 'react-native';
 import * as Location from 'expo-location';
 
 const LocationManager = () => {
+  // Using the useForegroundPermissions hook
+  const [response, requestPermission] = Location.useForegroundPermissions();
+
+  // Function to verify permission
+  const verifyPermission = async () => {
+    // Check if permission is already granted
+    if (response?.granted) {
+      return true;
+    }
+
+    // Request permission if not granted
+    const permissionResult = await requestPermission();
+    return permissionResult.granted;
+  };
+
   // Function to get the user's location
   const locateUserHandler = async () => {
-    try {
-      // Request permission to access location
-      const { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        Alert.alert('Permission Denied', 'Location permission is required to locate your position.');
-        return;
-      }
+    const hasPermission = await verifyPermission();
 
-      // Get the current position
+    // If permission is not granted, show an alert and return
+    if (!hasPermission) {
+      Alert.alert('Permission required', 'Location access is required to retrieve your position.');
+      return;
+    }
+
+    try {
+      // Get the current position if permission is granted
       const location = await Location.getCurrentPositionAsync({
         accuracy: Location.Accuracy.High,
       });
