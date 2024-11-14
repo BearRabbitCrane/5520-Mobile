@@ -10,63 +10,71 @@ import { writeToDB, deleteFromDB, deleteAllFromDB, writeUsersToSubcollection } f
 import { collection, onSnapshot, query, where } from "firebase/firestore";  
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
+const storage = getStorage(); // Initialize storage instance
+
 const Home = ({ navigation }) => {
   const appName = "My app";
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const handleImageData = async (uri) => {
-    try{
+    try {
       const response = await fetch(uri);
       if (!response.ok) {
-        throw new Error('fetch error happened with status ${response.status}');
+        throw new Error(`Fetch error with status ${response.status}`);
       }
       const blob = await response.blob();
       const imageName = uri.substring(uri.lastIndexOf('/') + 1);
-      const imageRef = await ref(storage, `images/${imageName}`)
+      const imageRef = ref(storage, `images/${imageName}`);
       const uploadResult = await uploadBytesResumable(imageRef, blob);
+
+      // Return the storage path after upload
+      return uploadResult.metadata.fullPath;
     } catch (error) {
       console.error('Failed to fetch image data:', error);
+      return null;
     }
   };
 
   // Handle adding goal input data to Firestore and updating local state
   const handleInputData = async (data) => {
-    let imageUrl = null;
-
-    // If there's an image URI, upload the image and get the path
-    if (data.imageUri) {
-      imageUrl = await handleImageData(data.imageUri);
+    if (!data.text) {
+      console.error("Text is missing in the goal data.");
+      return;
     }
-
+  
+    let imageUri = null;
+  
+    if (data.imageUri) {
+      imageUri = await handleImageData(data.imageUri);
+    }
+  
     const newGoal = {
-      text: data,
+      text: data.text, // Ensure this property exists
       timestamp: new Date(),
-      owner: auth.currentUser.uid, // Add owner's UID
-      imageUrl: imageUri, // Add image URL if available
+      owner: auth.currentUser.uid, 
+      imageUri: imageUri || null, 
     };
-
+  
     try {
-      // Add the goal to Firestore and get the goal ID
-      const goalId = await writeToDB(newGoal, "goals"); 
+      const goalId = await writeToDB(newGoal, "goals");
       console.log(`New goal added with ID: ${goalId}`);
-
-      // Fetch users from API and add them to the sub-collection for this goal
+      
       const usersArray = [
         { id: "1", name: "User 1", email: "user1@example.com", phone: "123456789" },
         { id: "2", name: "User 2", email: "user2@example.com", phone: "987654321" }
       ];
-
-      await writeUsersToSubcollection(goalId, usersArray);  // Add users to the sub-collection for this goal
-      console.log('Users added to the subcollection successfully.');
-
+  
+      await writeUsersToSubcollection(goalId, usersArray);
+      console.log("Users added to the subcollection successfully.");
+  
     } catch (error) {
-      console.error('Failed to add goal and users:', error);
+      console.error("Failed to add goal and users:", error);
     }
-
-    setIsModalVisible(false); // Close the modal after adding the goal
+  
+    setIsModalVisible(false);
   };
-
+  
 
   // Listen for changes in the "goals" collection in Firestore and update local state
   useEffect(() => {

@@ -18,9 +18,8 @@ export default function Input({ textInputFocus, onConfirm, onCancel, isModalVisi
   };
 
   const handleConfirm = () => {
-    onConfirm(text);
-    setText("");  // Clear TextInput after confirming
-    setImageUri(null); // Clear the image URI after confirming
+    onConfirm({ text, imageUri });
+    setText("");
   };
 
   const handleCancel = () => {
