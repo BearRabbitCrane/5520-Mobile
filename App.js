@@ -8,6 +8,7 @@ import GoalDetails from './components/GoalDetails';
 import Signup from './components/Signup';
 import Login from './components/Login';
 import Profile from './components/Profile'; 
+import Map from './components/Map'; // Import the Map component
 import { Ionicons } from '@expo/vector-icons';
 
 const Stack = createNativeStackNavigator();
@@ -71,6 +72,11 @@ const App = () => {
               name="Profile"
               component={Profile}
               options={{ title: 'Profile' }}
+            />
+            <Stack.Screen
+              name="Map"
+              component={Map}
+              options={{ title: 'Map' }}
             />
           </>
         ) : (

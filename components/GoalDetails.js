@@ -1,23 +1,41 @@
-import React, { useState, useLayoutEffect } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useState, useEffect, useLayoutEffect } from 'react';
+import { View, Text, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import PressableButton from './PressableButton';  // Reusable PressableButton component
-import GoalUsers from './GoalUsers';  // Import GoalUsers component
-import { updateWarningInDB } from '../Firebase/firestoreHelper';  // Import the Firestore update function
+import PressableButton from './PressableButton'; // Reusable PressableButton component
+import GoalUsers from './GoalUsers'; // Import GoalUsers component
+import { updateWarningInDB } from '../Firebase/firestoreHelper'; // Import the Firestore update function
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from '../Firebase/firebaseSetup';
 
 const GoalDetails = ({ route, navigation }) => {
-  // Extract the goal object passed via navigation
   const { goal } = route.params;
-  const [textColor, setTextColor] = useState("black");  // State to control text color
+  const [textColor, setTextColor] = useState("black"); // State to control text color
+  const [imageUrl, setImageUrl] = useState(null); // State to hold the image URL
+
+  // Fetch image URL if imageUri is available
+  useEffect(() => {
+    const fetchImageUrl = async () => {
+      if (goal.imageUri) {
+        try {
+          const imageRef = ref(storage, goal.imageUri);
+          const url = await getDownloadURL(imageRef);
+          setImageUrl(url); // Set image URL in state
+        } catch (error) {
+          console.error("Failed to retrieve image URL:", error);
+        }
+      }
+    };
+
+    fetchImageUrl();
+  }, [goal.imageUri]);
 
   // Function to change text color, update header title, and update Firestore
   const handleWarningPress = async () => {
-    setTextColor("red");  // Change text color to red
-    navigation.setOptions({ title: "Warning!" });  // Update header title
+    setTextColor("red"); // Change text color to red
+    navigation.setOptions({ title: "Warning!" }); // Update header title
 
-    // Update the warning field in Firestore
     try {
-      await updateWarningInDB(goal.id, "goals");  // Assume 'goals' is the collection name
+      await updateWarningInDB(goal.id, "goals");
       console.log('Warning field updated for goal:', goal.id);
     } catch (error) {
       console.error('Failed to update warning field:', error);
@@ -30,8 +48,8 @@ const GoalDetails = ({ route, navigation }) => {
       headerRight: () => (
         <PressableButton
           onPress={handleWarningPress}
-          isDelete={false}  // This is not the delete button, use icon instead
-          icon={<Ionicons name="alert-circle" size={24} color="white" />}  // Use an alert icon for the "Warn" button
+          isDelete={false}
+          icon={<Ionicons name="alert-circle" size={24} color="white" />}
           backgroundColor="#4B0082"
         />
       ),
@@ -43,18 +61,25 @@ const GoalDetails = ({ route, navigation }) => {
       <Text style={[styles.detailText, { color: textColor }]}>ID: {goal.id}</Text>
       <Text style={[styles.detailText, { color: textColor }]}>Text: {goal.text}</Text>
 
+      {/* Display image if imageUrl is available */}
+      {imageUrl && (
+        <Image 
+          source={{ uri: imageUrl }}
+          style={styles.image}
+          alt="Goal Image"
+        />
+      )}
+
       {/* Pass goalId to GoalUsers component */}
-      {/* Pass the goalId as a prop */}
-      <GoalUsers goalId={goal.id} /> 
+      <GoalUsers goalId={goal.id} />
 
       {/* Button to push another instance of GoalDetails on the stack */}
       <PressableButton
         title="More Details"
         onPress={() => {
-          // Navigate to a new instance of GoalDetails
           navigation.push('GoalDetails', { goal, isMoreDetails: true });
         }}
-        isDelete={false}  // This is a normal button
+        isDelete={false}
       />
     </View>
   );
@@ -71,6 +96,12 @@ const styles = StyleSheet.create({
   detailText: {
     fontSize: 18,
     marginVertical: 5,
+  },
+  image: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginVertical: 20,
   },
 });
 
