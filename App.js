@@ -45,10 +45,20 @@ const App = () => {
       alert(`Notification: ${notification.request.content.title}`);
     });
 
+    // Listener for user interaction with notifications
+    const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('Notification response received:', response);
+      if (response.notification.request.content.data?.goalId) {
+        console.log('Navigating to goal details:', response.notification.request.content.data.goalId);
+        // Add navigation logic here if necessary
+      }
+    });
+
     // Clean up listeners on unmount
     return () => {
       unsubscribe();
       subscription.remove();
+      responseSubscription.remove();
     };
   }, []);
 
