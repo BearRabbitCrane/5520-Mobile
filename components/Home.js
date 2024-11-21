@@ -9,6 +9,8 @@ import { auth, database } from "../Firebase/firebaseSetup";
 import { writeToDB, deleteFromDB, deleteAllFromDB, writeUsersToSubcollection } from "../Firebase/firestoreHelper";
 import { collection, onSnapshot, query, where } from "firebase/firestore";  
 import { getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import * as Notifications from "expo-notifications";
+import { verifyPermission } from "./NotificationManager";
 
 const storage = getStorage(); // Initialize storage instance
 
@@ -17,6 +19,39 @@ const Home = ({ navigation }) => {
   const [goals, setGoals] = useState([]);  
   const [isModalVisible, setIsModalVisible] = useState(false);
 
+  // Function to get Expo Push Token
+  const getPushToken = async () => {
+    const hasPermission = await verifyPermission();
+    if (!hasPermission) {
+      Alert.alert("Permission required", "Notification permission is required to enable push notifications.");
+      return;
+    }
+
+    try {
+      // Android-specific channel setup
+      if (Platform.OS === "android") {
+        await Notifications.setNotificationChannelAsync("default", {
+          name: "default",
+          importance: Notifications.AndroidImportance.MAX,
+        });
+      }
+
+      // Get Expo Push Token
+      const pushToken = await Notifications.getExpoPushTokenAsync({
+        projectId: Constants.expoConfig.extra.eas.projectId,
+      });
+      console.log("Expo Push Token:", pushToken.data);
+      // Optionally, save the token to Firestore or your backend service
+    } catch (err) {
+      console.error("Failed to get push token:", err);
+    }
+  };
+
+  // Fetch push token on mount
+  useEffect(() => {
+    getPushToken();
+  }, []);
+  
   const handleImageData = async (uri) => {
     try {
       const response = await fetch(uri);
