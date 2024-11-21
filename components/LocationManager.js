@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { View, Button, StyleSheet, Alert, Image } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import { saveUserLocation } from '../Firebase/firestoreHelper';
+import { saveUserLocation, getUserLocation } from '../Firebase/firestoreHelper';
+import { auth } from '../Firebase/firebaseSetup'; // For getting the current user ID
 
 const LocationManager = () => {
   const navigation = useNavigation(); // Hook to get navigation prop
@@ -58,6 +59,24 @@ const LocationManager = () => {
       Alert.alert("Error", "Failed to save location.");
     }
   };
+
+  // Fetch user location from Firestore when component loads
+  useEffect(() => {
+    const fetchUserLocation = async () => {
+      try {
+        const userId = auth.currentUser.uid; // Get current user ID
+        const savedLocation = await getUserLocation(userId); // Fetch location from Firestore
+
+        if (savedLocation) {
+          setLocation(savedLocation); // Set state variable if location exists
+        }
+      } catch (err) {
+        console.error("Error fetching user location from Firestore:", err);
+      }
+    };
+
+    fetchUserLocation();
+  }, []);
 
   // UseEffect to set location from Map.js when returned via route.params
   useEffect(() => {

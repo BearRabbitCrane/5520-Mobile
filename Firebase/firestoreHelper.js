@@ -1,4 +1,4 @@
-import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc, setDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc, setDoc, getDoc } from "firebase/firestore";
 import { database } from "./firebaseSetup"; // Import the Firestore database object from firebaseSetup.js
 import { auth } from "../Firebase/firebaseSetup";
 
@@ -135,5 +135,27 @@ export async function saveUserLocation(location) {
   } catch (err) {
     console.error("Error saving user location:", err);
     throw err;
+  }
+}
+
+/**
+ * Fetches the user's location from Firestore given their user ID.
+ * @param {string} userId - The user ID to fetch the location for.
+ * @returns {Promise<Object|null>} - Resolves to the user's location object or null if not found.
+ */
+export async function getUserLocation(userId) {
+  try {
+    const userDocRef = doc(database, "users", userId); // Reference to the user document
+    const userDoc = await getDoc(userDocRef); // Fetch the document
+
+    if (userDoc.exists()) {
+      return userDoc.data().location || null; // Return the location field or null if it doesn't exist
+    } else {
+      console.log("No such document!");
+      return null;
+    }
+  } catch (err) {
+    console.error("Error fetching user location:", err);
+    throw err; // Re-throw the error for the calling function to handle
   }
 }
