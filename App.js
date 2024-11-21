@@ -10,6 +10,18 @@ import Login from './components/Login';
 import Profile from './components/Profile'; 
 import Map from './components/Map'; // Import the Map component
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+
+// Set the notification handler globally
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true, // Show alert for the notification
+      shouldPlaySound: true, // Play sound for the notification
+      shouldSetBadge: false, // Do not set app badge for the notification
+    };
+  },
+});
 
 const Stack = createNativeStackNavigator();
 
