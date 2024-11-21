@@ -39,8 +39,17 @@ const App = () => {
       }
     });
 
-    // Clean up the listener on unmount
-    return () => unsubscribe();
+    // Listener for notifications received while the app is running
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      console.log('Notification received:', notification);
+      alert(`Notification: ${notification.request.content.title}`);
+    });
+
+    // Clean up listeners on unmount
+    return () => {
+      unsubscribe();
+      subscription.remove();
+    };
   }, []);
 
   return (
