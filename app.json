@@ -29,6 +29,14 @@
     {
       "cameraPermission": "The app needs access to your camera."
     }
+  ],
+  [
+    "expo-notifications",
+    {
+      "icon": "./assets/icon.png",
+      "color": "#4a148c",
+      "sounds": ["./assets/notification.wav"]
+    }
   ]
 ]
   }
