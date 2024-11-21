@@ -1,4 +1,4 @@
-import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, addDoc, updateDoc, setDoc } from "firebase/firestore";
 import { database } from "./firebaseSetup"; // Import the Firestore database object from firebaseSetup.js
 import { auth } from "../Firebase/firebaseSetup";
 
@@ -111,5 +111,29 @@ export async function writeUsersToSubcollection(goalId, usersArray) {
     }
   } catch (error) {
     console.error('Error adding users to sub-collection:', error);
+  }
+}
+
+/**
+ * Saves the user's location to Firestore in the "users" collection.
+ * @param {Object} location - An object containing latitude and longitude.
+ * @returns {Promise} - Resolves when the location is successfully saved.
+ */
+export async function saveUserLocation(location) {
+  if (!auth.currentUser) {
+    throw new Error("No authenticated user found");
+  }
+
+  try {
+    const userDocRef = doc(database, "users", auth.currentUser.uid); // Reference to the user document
+    await setDoc(
+      userDocRef,
+      { location }, // Save location under the "location" field
+      { merge: true } // Merge with existing data to avoid overwriting
+    );
+    console.log("User location saved successfully.");
+  } catch (err) {
+    console.error("Error saving user location:", err);
+    throw err;
   }
 }

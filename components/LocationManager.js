@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Button, StyleSheet, Alert, Image } from 'react-native';
 import * as Location from 'expo-location';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { saveUserLocation } from '../Firebase/firestoreHelper';
 
 const LocationManager = () => {
   const navigation = useNavigation(); // Hook to get navigation prop
@@ -43,6 +44,21 @@ const LocationManager = () => {
     }
   };
 
+  // Save location to Firestore
+  const saveLocationHandler = async () => {
+    if (!location) {
+      Alert.alert("No location", "Please locate yourself before saving.");
+      return;
+    }
+
+    try {
+      await saveUserLocation(location); // Call the helper function
+      Alert.alert("Success", "Your location has been saved.");
+    } catch (err) {
+      Alert.alert("Error", "Failed to save location.");
+    }
+  };
+
   // UseEffect to set location from Map.js when returned via route.params
   useEffect(() => {
     if (route.params?.selectedLocation) {
@@ -59,10 +75,10 @@ const LocationManager = () => {
     <View style={styles.container}>
       <Button title="Locate Me" onPress={locateUserHandler} />
       {location && (
-        <Image
-          source={{ uri: mapImageUrl }}
-          style={styles.mapImage}
-        />
+        <>
+          <Image source={{ uri: mapImageUrl }} style={styles.mapImage} />
+          <Button title="Save Location" onPress={saveLocationHandler} />
+        </>
       )}
       {location && (
         <Button
