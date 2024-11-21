@@ -10,6 +10,18 @@ import Login from './components/Login';
 import Profile from './components/Profile'; 
 import Map from './components/Map'; // Import the Map component
 import { Ionicons } from '@expo/vector-icons';
+import * as Notifications from 'expo-notifications';
+
+// Set the notification handler globally
+Notifications.setNotificationHandler({
+  handleNotification: async () => {
+    return {
+      shouldShowAlert: true, // Show alert for the notification
+      shouldPlaySound: true, // Play sound for the notification
+      shouldSetBadge: false, // Do not set app badge for the notification
+    };
+  },
+});
 
 const Stack = createNativeStackNavigator();
 
@@ -27,8 +39,27 @@ const App = () => {
       }
     });
 
-    // Clean up the listener on unmount
-    return () => unsubscribe();
+    // Listener for notifications received while the app is running
+    const subscription = Notifications.addNotificationReceivedListener((notification) => {
+      console.log('Notification received:', notification);
+      alert(`Notification: ${notification.request.content.title}`);
+    });
+
+    // Listener for user interaction with notifications
+    const responseSubscription = Notifications.addNotificationResponseReceivedListener((response) => {
+      console.log('Notification response received:', response);
+      if (response.notification.request.content.data?.goalId) {
+        console.log('Navigating to goal details:', response.notification.request.content.data.goalId);
+        // Add navigation logic here if necessary
+      }
+    });
+
+    // Clean up listeners on unmount
+    return () => {
+      unsubscribe();
+      subscription.remove();
+      responseSubscription.remove();
+    };
   }, []);
 
   return (

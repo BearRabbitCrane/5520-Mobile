@@ -4,6 +4,7 @@ import { auth } from '../Firebase/firebaseSetup';
 import { signOut } from 'firebase/auth';
 import { Ionicons } from '@expo/vector-icons';
 import LocationManager from './LocationManager';
+import NotificationManager from './NotificationManager';
 
 const Profile = ({ navigation, route }) => {
   const user = auth.currentUser;
@@ -59,6 +60,7 @@ const Profile = ({ navigation, route }) => {
           Selected Location: {selectedLocation.latitude}, {selectedLocation.longitude}
         </Text>
       )}
+      <NotificationManager />
     </View>
   );
 };
